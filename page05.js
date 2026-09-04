@@ -645,4 +645,48 @@
 
         };
 
+
+/* =====================================================
+   DEV NAVIGATION RESET
+===================================================== */
+
+window.startCongratulationsPage = function () {
+
+    opened = false;
+    built = false;
+    dragging = false;
+    completed = false;
+    waitingForFinalClick = false;
+
+
+    root.classList.remove(
+        "show",
+        "approaching",
+        "puzzle-open",
+        "completed"
+    );
+
+
+    ring?.classList.remove("hidden");
+
+    letter?.classList.remove("open");
+
+
+    stage.style.opacity = "";
+    stage.style.visibility = "";
+    stage.style.pointerEvents = "";
+
+
+    pieceSource.classList.remove(
+        "dragging",
+        "snapped"
+    );
+
+
+    pieceSource.style.opacity = "";
+    pieceSource.style.visibility = "";
+    pieceSource.style.pointerEvents = "";
+
+};
+
 })();

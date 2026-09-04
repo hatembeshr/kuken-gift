@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="page05.css">
     <link rel="stylesheet" href="final.css">
+    <link rel="stylesheet" href="birthday.css">
+    <link rel="stylesheet" href="birthday-gift.css">
 
 </head>
 
@@ -40,51 +42,68 @@
 
         <button data-page="finalPage">06</button>
 
+        <button data-page="birthdayPage">07</button>
+
     </div>
 
 
     <main class="app" id="app">
 
+<!-- =====================================================
+     PAGE 01 — THE DOOR
+====================================================== -->
 
-        <!-- =====================================================
-             PAGE 01 — OPENING
-        ====================================================== -->
+<section
+    class="page opening-page active"
+    id="openingPage"
+>
 
-        <section
-            class="page opening-page active"
-            id="openingPage"
+    <div class="door-scene">
+
+        <p class="door-eyebrow">
+            someone is waiting...
+        </p>
+
+
+        <button
+    class="door"
+    id="door"
+    type="button"
+    aria-label="Knock on the door"
+>
+
+    <span class="door-light"></span>
+
+    <span class="door-panel">
+
+        <span class="door-highlight"></span>
+
+        <span class="door-handle">
+            <span class="door-handle-knob"></span>
+        </span>
+
+    </span>
+
+</button>
+
+
+        <p
+            class="door-hint"
+            id="doorHint"
         >
-
-            <div class="opening">
-
-                <button
-                    class="open-trigger"
-                    id="openTrigger"
-                >
-                    open
-                </button>
+            knock on the door
+        </p>
 
 
-                <p
-                    class="question"
-                    id="question"
-                >
-                    are you sure?
-                </p>
+        <p
+            class="door-knock"
+            id="doorKnock"
+            aria-live="polite"
+        ></p>
 
-            </div>
+    </div>
 
-
-            <button
-                class="tap-hint"
-                id="tapHint"
-            >
-                keep going
-            </button>
-
-        </section>
-
-
+</section>
         <!-- =====================================================
              PAGE 02 — WHEN?
         ====================================================== -->
@@ -792,8 +811,414 @@
     <audio
     id="finalAudio"
     preload="auto"
+    loop
     src="final.m4a"
 ></audio>
+
+</section>
+
+<!-- =====================================================
+     PAGE 07 — BIRTHDAY
+====================================================== -->
+
+<section
+    class="page birthday-page"
+    id="birthdayPage"
+>
+
+    <!-- BACKGROUND -->
+
+    <div class="birthday-stars">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div
+        class="birthday-confetti"
+        id="birthdayConfetti"
+    ></div>
+
+
+    <!-- =================================================
+         INTRO
+    ================================================== -->
+
+    <div
+        class="birthday-scene"
+        id="birthdayIntro"
+    >
+
+        <p class="birthday-small-text">
+            hey...
+        </p>
+
+        <h1 class="birthday-title">
+            wait.
+        </h1>
+
+        <p class="birthday-subtitle">
+            I think today is someone's special day.
+        </p>
+
+        <button
+            type="button"
+            class="birthday-continue"
+            id="birthdayStart"
+        >
+            I think I know who
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         REVEAL
+    ================================================== -->
+
+    <div
+        class="birthday-scene birthday-reveal"
+        id="birthdayReveal"
+    >
+
+        <p class="birthday-reveal-small">
+            IT'S YOUR DAY.
+        </p>
+
+        <h2>
+            happy birthday,
+        </h2>
+
+        <h1>
+            سكاكر 🤍
+        </h1>
+
+        <p class="birthday-reveal-text">
+            and yes...
+            <br>
+            I made a whole thing about it.
+        </p>
+
+        <button
+            type="button"
+            class="birthday-continue"
+            id="birthdayCelebrate"
+        >
+            LET'S CELEBRATE 🎉
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         CELEBRATION
+    ================================================== -->
+
+    <div
+        class="birthday-scene birthday-celebration"
+        id="birthdayCelebration"
+    >
+
+        <div class="birthday-message">
+
+            <p>
+                you know...
+            </p>
+
+            <p>
+                I could've just said
+                <strong>"happy birthday"</strong>
+            </p>
+
+            <p>
+                and called it a day.
+            </p>
+
+            <p>
+                but where's the fun in that? 😂
+            </p>
+
+            <p>
+                you deserve a little more
+                than two words on a screen.
+            </p>
+
+        </div>
+
+
+        <!-- BALLOONS -->
+
+        <div class="birthday-balloons">
+
+            <span class="balloon balloon-1"></span>
+            <span class="balloon balloon-2"></span>
+            <span class="balloon balloon-3"></span>
+            <span class="balloon balloon-4"></span>
+            <span class="balloon balloon-5"></span>
+
+        </div>
+
+
+<!-- =================================================
+     REAL ANIMATED CAKE
+================================================== -->
+
+<div
+    class="birthday-cake-area"
+    id="birthdayCakeArea"
+>
+
+    <div class="birthday-cake">
+
+        <div class="birthday-cake-svg-wrap">
+
+            <img
+                src="birthday-cake.svg"
+                class="birthday-cake-svg"
+                alt=""
+            >
+
+        <div class="birthday-candle-wrap">
+
+    <img
+        src="birthday-candle.svg"
+        class="birthday-candle-svg"
+        id="birthdayCandle"
+        alt=""
+    >
+
+    <img
+        src="birthday-flame.svg"
+        class="birthday-flame-svg"
+        id="birthdayFlame"
+        alt=""
+    >
+
+    <span
+        class="birthday-candle-smoke smoke-one"
+    ></span>
+
+    <span
+        class="birthday-candle-smoke smoke-two"
+    ></span>
+
+    <span
+        class="birthday-candle-smoke smoke-three"
+    ></span>
+
+</div>
+
+
+
+        </div>
+
+    </div>
+
+
+    <p class="cake-prompt">
+        make a wish.
+        <span>tap the flame.</span>
+    </p>
+
+
+    <!-- AFTER CAKE -->
+
+    <div
+        class="birthday-after-cake"
+        id="birthdayAfterCake"
+    >
+
+        <p>okay...</p>
+
+        <p>
+            I know I can't actually
+            make you blow these out...
+        </p>
+
+        <p>
+            so I'll do it for you. 😂
+        </p>
+
+        <p class="birthday-soft-line">
+            but I hope you made a wish.
+        </p>
+
+        <button
+            type="button"
+            class="birthday-continue"
+            id="birthdayGift"
+        >
+            THERE'S SOMETHING ELSE 🎁
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     GIFT
+================================================== -->
+
+<div class="birthday-gift-scene" id="birthdayGiftScene">
+
+    <p class="gift-intro">
+        I think there's something here...
+    </p>
+
+    <div
+        class="birthday-gift-container"
+        id="giftBoxContainer"
+    >
+
+        <div class="birthday-gift-shadow"></div>
+
+        <div
+            class="birthday-gift-box"
+            id="giftBox"
+            aria-hidden="true"
+        >
+
+            <div class="gift-body">
+
+                <span class="gift-ribbon gift-ribbon-body"></span>
+
+            </div>
+
+            <div
+                class="gift-lid"
+                id="giftLid"
+            >
+
+                <span class="gift-ribbon gift-ribbon-lid"></span>
+
+            </div>
+
+        </div>
+
+        <button
+            class="gift-click"
+            id="giftClick"
+            type="button"
+            aria-label="Open the gift"
+        ></button>
+
+    </div>
+
+
+    <div
+        class="birthdayGiftMessage"
+        id="birthdayGiftMessage"
+    >
+
+        <h2 class="gift-text">
+            There's something for you.
+        </h2>
+
+        <p class="gift-small-text">
+            You didn't think that was the end, did you?
+        </p>
+
+        <button
+            class="birthday-continue"
+            id="openGift"
+            type="button"
+        >
+            Open it
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     VOICE NOTE
+================================================== -->
+
+<div
+    class="birthday-voice-scene"
+    id="birthdayVoiceScene"
+>
+
+    <div class="voice-note-intro">
+
+        <p>ONE LAST THING</p>
+
+        <h2>A little something<br>you can hear.</h2>
+
+        <p>
+            I wanted to leave you with my voice.
+        </p>
+
+    </div>
+
+
+    <button
+        class="voice-note-button"
+        id="voiceNoteButton"
+        type="button"
+        aria-label="Play voice note"
+    >
+
+        <span class="voice-play-icon">
+            ▶
+        </span>
+
+        <span class="voice-wave" aria-hidden="true">
+
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+
+        </span>
+
+    </button>
+
+
+    <p class="voice-note-hint">
+        press to listen
+    </p>
+
+    <p
+        class="voice-note-status"
+        id="voiceNoteStatus"
+    ></p>
+
+
+    <audio
+        id="birthdayVoice"
+        preload="auto"
+    ></audio>
+
+
+    <div class="birthday-final-message">
+
+        <p>
+            Some things are easier to say out loud.
+        </p>
+
+        <p>
+            So whenever you're ready...
+        </p>
+
+    </div>
+
+</div>
 
 </section>
 
@@ -810,6 +1235,10 @@
     <script src="page05.js"></script>
 
     <script src="final.js"></script>
+
+    <script src="birthday.js"></script>
+
+    <script src="birthday-gift.js"></script>
 
     <script src="dev-nav.js"></script>
 

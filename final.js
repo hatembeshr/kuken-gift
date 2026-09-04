@@ -512,6 +512,22 @@
     window.startFinalPage =
         startFinalPage;
 
+    window.stopFinalPage = function () {
+
+    if (finalAudio) {
+
+        finalAudio.pause();
+
+        finalAudio.currentTime = 0;
+
+        finalAudio.volume = 0;
+
+    }
+
+    clearInterval(musicFadeTimer);
+
+};
+
 
     const pageObserver =
         new MutationObserver(() => {

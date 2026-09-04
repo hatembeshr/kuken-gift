@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160">
+<defs>
+<radialGradient id="g"><stop offset="0" stop-color="#fff7a8" stop-opacity=".9"/><stop offset="1" stop-color="#ffd45a" stop-opacity="0"/></radialGradient>
+<linearGradient id="f" x1="50%" y1="100%" x2="50%" y2="0%"><stop stop-color="#ff6b2c"/><stop offset=".55" stop-color="#ff8f2d"/><stop offset="1" stop-color="#ffe45c"/></linearGradient>
+<linearGradient id="i" x1="50%" y1="100%" x2="50%" y2="0%"><stop stop-color="#ffb52f"/><stop offset=".75" stop-color="#fff2a0"/><stop offset="1" stop-color="#fffbe0"/></linearGradient>
+<filter id="b"><feGaussianBlur stdDeviation="8"/></filter>
+</defs>
+<ellipse cx="60" cy="82" rx="42" ry="52" fill="url(#g)" filter="url(#b)">
+<animate attributeName="opacity" values=".65;1;.7" dur=".8s" repeatCount="indefinite"/>
+</ellipse>
+<path d="M60 8 C57 27 78 40 76 63 C74 83 67 101 60 111 C49 101 39 88 40 70 C41 51 54 39 60 8Z" fill="url(#f)">
+<animate attributeName="d" dur=".75s" repeatCount="indefinite"
+values="M60 8 C57 27 78 40 76 63 C74 83 67 101 60 111 C49 101 39 88 40 70 C41 51 54 39 60 8Z;
+M61 13 C55 31 76 43 73 64 C71 84 66 99 60 108 C51 99 42 87 43 69 C44 51 56 38 61 13Z;
+M60 8 C57 27 78 40 76 63 C74 83 67 101 60 111 C49 101 39 88 40 70 C41 51 54 39 60 8Z"/>
+<animateTransform attributeName="transform" type="rotate" values="-2 60 110;2 60 110;-1 60 110;-2 60 110" dur=".75s" repeatCount="indefinite"/>
+</path>
+<path d="M60 48 C58 61 67 69 66 80 C65 91 62 98 60 101 C54 95 51 88 52 80 C53 70 58 63 60 48Z" fill="url(#i)">
+<animate attributeName="opacity" values=".9;1;.85;1" dur=".6s" repeatCount="indefinite"/>
+</path>
+</svg>

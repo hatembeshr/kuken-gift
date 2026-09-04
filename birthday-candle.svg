@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 260" width="120" height="260">
+  <defs>
+    <linearGradient id="wax" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f1dcd6"/>
+      <stop offset=".5" stop-color="#fffdf8"/>
+      <stop offset="1" stop-color="#f4d9d0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- candle body -->
+  <rect x="43" y="65" width="34" height="150" rx="6"
+        fill="url(#wax)"
+        stroke="#c9a9a3"
+        stroke-opacity=".35"/>
+
+  <!-- pink stripes -->
+  <g fill="#e98697">
+    <rect x="39" y="88" width="42" height="7" rx="4"
+          transform="rotate(25 60 91)" opacity=".9"/>
+    <rect x="39" y="115" width="42" height="7" rx="4"
+          transform="rotate(25 60 118)" opacity=".76"/>
+    <rect x="39" y="142" width="42" height="7" rx="4"
+          transform="rotate(25 60 145)" opacity=".63"/>
+    <rect x="39" y="169" width="42" height="7" rx="4"
+          transform="rotate(25 60 172)" opacity=".52"/>
+    <rect x="39" y="196" width="42" height="7" rx="4"
+          transform="rotate(25 60 199)" opacity=".42"/>
+  </g>
+
+  <!-- wick only -->
+  <rect x="58" y="57" width="4" height="13" rx="2" fill="#273c4b"/>
+</svg>

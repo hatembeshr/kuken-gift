@@ -3036,3 +3036,369 @@ input[type="range"]::-moz-range-thumb {
     }
 
 }
+
+
+/* =========================================================
+   PAGE 01 — THE DOOR
+========================================================= */
+
+#openingPage {
+    background: #050505;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   SCENE
+========================================================= */
+
+#openingPage .door-scene {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    z-index: 5;
+}
+
+
+/* =========================================================
+   TEXT ABOVE DOOR
+========================================================= */
+
+#openingPage .door-eyebrow {
+    margin: 0 0 24px;
+
+    color: #666;
+
+    font-size: 10px;
+
+    letter-spacing: .22em;
+
+    opacity: .8;
+
+    transition: opacity .6s ease;
+}
+
+
+/* =========================================================
+   DOOR
+========================================================= */
+
+#openingPage .door {
+    position: relative;
+
+    width: 250px;
+    height: 390px;
+
+    padding: 0;
+
+    border: 2px solid #eee;
+    border-radius: 2px;
+
+    background: #050505;
+
+    cursor: pointer;
+
+    outline: none;
+
+    perspective: 1200px;
+    transform-style: preserve-3d;
+
+    -webkit-tap-highlight-color: transparent;
+
+    z-index: 10;
+}
+
+
+/* =========================================================
+   LIGHT INSIDE THE DOOR
+========================================================= */
+
+#openingPage .door-light {
+    position: absolute;
+    inset: 0;
+
+    z-index: 1;
+
+    background: #fff;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    box-shadow:
+        0 0 35px rgba(255, 255, 255, .85),
+        0 0 80px rgba(255, 255, 255, .55);
+
+    transition:
+        opacity .45s ease;
+}
+
+
+/* =========================================================
+   DOOR PANEL
+========================================================= */
+
+#openingPage .door-panel {
+    position: absolute;
+    inset: 0;
+
+    z-index: 3;
+
+    display: block;
+
+    background: #050505;
+
+    border: none;
+
+    transform-origin: left center;
+
+    transform-style: preserve-3d;
+
+    backface-visibility: hidden;
+
+    transition:
+        transform 1.8s cubic-bezier(.22, .8, .2, 1);
+}
+
+
+/* =========================================================
+   REMOVE OLD DECORATION
+========================================================= */
+
+#openingPage .door-panel::before,
+#openingPage .door-panel::after {
+    display: none;
+}
+
+
+/* =========================================================
+   WHITE EDGE
+========================================================= */
+
+#openingPage .door-highlight {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 2px;
+    height: 100%;
+
+    background: #fff;
+
+    opacity: .75;
+}
+
+
+/* =========================================================
+   HANDLE
+========================================================= */
+
+#openingPage .door-handle {
+    position: absolute;
+
+    right: 28px;
+    top: 50%;
+
+    width: 22px;
+    height: 22px;
+
+    transform:
+        translateY(-50%);
+
+    border-radius: 50%;
+
+    border: 2px solid #fff;
+
+    background: #fff;
+
+    box-shadow:
+        0 0 10px rgba(255, 255, 255, .25);
+
+    z-index: 5;
+}
+
+
+#openingPage .door-handle-knob {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 7px;
+    height: 7px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: #050505;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+#openingPage .door:hover .door-handle {
+    box-shadow:
+        0 0 16px rgba(255, 255, 255, .45);
+}
+
+
+/* =========================================================
+   KNOCK
+========================================================= */
+
+#openingPage .door.knock .door-panel {
+    animation:
+        doorKnock .28s ease;
+}
+
+
+@keyframes doorKnock {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    50% {
+        transform: translateX(4px);
+    }
+
+    75% {
+        transform: translateX(-2px);
+    }
+}
+
+
+/* =========================================================
+   KNOCK TEXT
+========================================================= */
+
+#openingPage .door-knock {
+    position: absolute;
+
+    left: 50%;
+    bottom: 15%;
+
+    transform:
+        translateX(-50%)
+        translateY(5px);
+
+    margin: 0;
+
+    min-height: 16px;
+
+    color: #777;
+
+    font-size: 10px;
+
+    letter-spacing: .18em;
+
+    opacity: 0;
+
+    transition:
+        opacity .25s ease,
+        transform .25s ease;
+}
+
+
+#openingPage .door-knock.show {
+    opacity: 1;
+
+    transform:
+        translateX(-50%)
+        translateY(0);
+}
+
+
+/* =========================================================
+   HINT
+========================================================= */
+
+#openingPage .door-hint {
+    margin: 24px 0 0;
+
+    color: #555;
+
+    font-size: 10px;
+
+    letter-spacing: .14em;
+
+    transition: opacity .5s ease;
+}
+
+
+/* =========================================================
+   OPEN THE DOOR
+========================================================= */
+
+#openingPage.door-open .door-panel {
+    transform:
+        rotateY(-48deg);
+}
+
+
+#openingPage.door-open .door-light {
+    opacity: 1;
+}
+
+
+/* =========================================================
+   SMOOTH ZOOM INTO THE LIGHT
+========================================================= */
+
+#openingPage .door-scene {
+    transform-origin: 58% 50%;
+    transform: scale(1);
+
+    transition:
+        transform 1.55s cubic-bezier(.12, .85, .18, 1);
+}
+
+
+#openingPage.door-zoom .door-scene {
+    transform: scale(14);
+}
+
+/* =========================================================
+   HIDE TEXT DURING OPENING
+========================================================= */
+
+#openingPage.door-open .door-eyebrow,
+#openingPage.door-open .door-hint,
+#openingPage.door-open .door-knock {
+    opacity: 0;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    #openingPage .door {
+        width: 210px;
+        height: 330px;
+    }
+
+    #openingPage .door-handle {
+        right: 22px;
+    }
+}

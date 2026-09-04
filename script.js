@@ -5,10 +5,14 @@
 const openingPage = document.getElementById("openingPage");
 const whenPage = document.getElementById("whenPage");
 
-const openTrigger = document.getElementById("openTrigger");
-const question = document.getElementById("question");
+const door =
+    document.getElementById("door");
 
-const tapHint = document.getElementById("tapHint");
+const doorHint =
+    document.getElementById("doorHint");
+
+const doorKnock =
+    document.getElementById("doorKnock");
 
 const dateSlider = document.getElementById("dateSlider");
 const displayDate = document.getElementById("displayDate");
@@ -31,123 +35,251 @@ const roomComplete = document.getElementById("roomComplete");
 
 const roomContinue = document.getElementById("roomContinue");
 
-
 /* =================================
-   PAGE 01 — OPENING
+   PAGE 01 — THE DOOR
 ================================= */
 
-let openingState = 0;
+let knockCount = 0;
+
+let knockResetTimer = null;
+
+let doorOpening = false;
 
 
-openTrigger.addEventListener("click", () => {
+const KNOCK_LIMIT = 3;
 
-    // =========================
-    // FIRST CLICK
-    // =========================
-
-    if (openingState === 0) {
-
-        openingState = 1;
-
-        question.textContent = "are you sure?";
-
-        return;
-    }
-
-
-    // =========================
-    // SECOND CLICK
-    // =========================
-
-    if (openingState === 1) {
-
-        openingState = 2;
-
-        question.textContent = "are you really sure?";
-
-        return;
-    }
-
-
-    // =========================
-    // THIRD CLICK
-    // =========================
-
-    if (openingState === 2) {
-
-        openingState = 3;
-
-        openTrigger.style.opacity = "0";
-        question.style.opacity = "0";
-
-        setTimeout(() => {
-
-            openTrigger.style.display = "none";
-            question.style.display = "none";
-
-            openingPage.classList.add("final-state");
-
-
-            const message = document.createElement("div");
-
-            message.className = "final-message";
-
-            message.innerHTML = `
-                <span class="small">okay.</span>
-                <span class="main">I made this for you.</span>
-            `;
-
-            openingPage.appendChild(message);
-
-
-            // Show:
-            // I made this for you.
-
-            setTimeout(() => {
-
-                message.classList.add("show-main");
-
-            }, 1800);
-
-
-            // Show:
-            // keep going
-
-            setTimeout(() => {
-
-                tapHint.style.opacity = "1";
-                tapHint.style.pointerEvents = "auto";
-
-            }, 3400);
-
-        }, 800);
-
-    }
-
-});
+const KNOCK_WINDOW = 1800;
 
 
 /* =================================
-   MOVE FROM PAGE 01 → PAGE 02
+   KNOCK ON THE DOOR
 ================================= */
 
-tapHint.addEventListener("click", () => {
+door?.addEventListener(
+    "click",
+    () => {
 
-    // Fade out page 01
+        if (doorOpening) {
+            return;
+        }
 
-    openingPage.classList.remove("active");
+
+        /*
+         * Reset the knock sequence if
+         * the user takes too long.
+         */
+
+        window.clearTimeout(
+            knockResetTimer
+        );
 
 
-    // Wait for fade
+        knockCount++;
 
-    setTimeout(() => {
 
-        whenPage.classList.add("active");
+        /* =============================
+           DOOR SHAKE
+        ============================= */
 
-    }, 500);
+        door.classList.remove(
+            "knock"
+        );
 
-});
 
+        /*
+         * Force the animation to restart.
+         */
+
+        void door.offsetWidth;
+
+
+        door.classList.add(
+            "knock"
+        );
+
+
+        door.addEventListener(
+            "animationend",
+            () => {
+
+                door.classList.remove(
+                    "knock"
+                );
+
+            },
+            {
+                once: true
+            }
+        );
+
+
+        /* =============================
+           KNOCK MESSAGE
+        ============================= */
+
+        if (doorKnock) {
+
+            doorKnock.textContent =
+                knockCount === 1
+                    ? "knock."
+                    : knockCount === 2
+                        ? "knock... knock."
+                        : "knock... knock... knock.";
+
+            doorKnock.classList.add(
+                "show"
+            );
+
+
+            window.setTimeout(
+                () => {
+
+                    doorKnock.classList.remove(
+                        "show"
+                    );
+
+                },
+                700
+            );
+        }
+
+
+        /* =============================
+           HINT
+        ============================= */
+
+        if (doorHint) {
+
+            if (knockCount === 1) {
+
+                doorHint.textContent =
+                    "again.";
+
+            } else if (knockCount === 2) {
+
+                doorHint.textContent =
+                    "one more.";
+
+            } else {
+
+                doorHint.textContent =
+                    "";
+
+            }
+
+        }
+
+
+        /* =============================
+           THREE KNOCKS
+        ============================= */
+
+        if (
+            knockCount >=
+            KNOCK_LIMIT
+        ) {
+
+            openDoor();
+
+            return;
+        }
+
+
+        /* =============================
+           RESET SEQUENCE
+        ============================= */
+
+        knockResetTimer =
+            window.setTimeout(
+                () => {
+
+                    knockCount = 0;
+
+
+                    if (doorHint) {
+
+                        doorHint.textContent =
+                            "knock on the door";
+
+                    }
+
+                },
+                KNOCK_WINDOW
+            );
+
+    }
+);
+
+
+/* =================================
+   OPEN THE DOOR
+================================= */
+
+function openDoor() {
+
+    doorOpening = true;
+
+    window.clearTimeout(
+        knockResetTimer
+    );
+
+    knockCount = KNOCK_LIMIT;
+
+
+    /* =============================
+       HIDE TEXT
+    ============================= */
+
+    if (doorHint) {
+        doorHint.textContent = "";
+    }
+
+
+    /* =============================
+       OPEN THE DOOR
+    ============================= */
+
+    openingPage.classList.add(
+        "door-open"
+    );
+
+
+    /* =============================
+       START ZOOM
+    ============================= */
+
+    window.setTimeout(
+        () => {
+
+            openingPage.classList.add(
+                "door-zoom"
+            );
+
+        },
+        700
+    );
+
+
+    /* =============================
+       MOVE TO PAGE 02
+       WHILE ZOOM IS STILL RUNNING
+    ============================= */
+
+    window.setTimeout(
+        () => {
+
+            openingPage.classList.remove(
+                "active"
+            );
+
+            whenPage.classList.add(
+                "active"
+            );
+
+        },
+        1450
+    );
+}
 
 /* =================================
    PAGE 02 — DATE FINDER
@@ -2032,88 +2164,4 @@ roomContinue.addEventListener(
 ================================= */
 
 buildLyrics();
-
-
-/* =================================
-   DEV NAVIGATION
-================================= */
-
-const devNavigation =
-    document.getElementById("devNavigation");
-
-
-const devButtons =
-    devNavigation.querySelectorAll(
-        "button"
-    );
-
-
-function devGoToPage(pageId) {
-
-    const targetPage =
-        document.getElementById(pageId);
-
-    if (!targetPage) {
-
-        console.error(
-            "Page not found:",
-            pageId
-        );
-
-        return;
-    }
-
-
-    // Hide every page
-
-    document
-        .querySelectorAll(".page")
-        .forEach((page) => {
-
-            page.classList.remove(
-                "active"
-            );
-
-        });
-
-
-    // Show requested page
-
-    targetPage.classList.add(
-        "active"
-    );
-
-
-    // Stop Page 04 audio
-
-    if (
-        typeof songAudio !== "undefined"
-    ) {
-
-        songAudio.pause();
-
-    }
-
-
-    /*
-     * Page 04
-     */
-
-    if (
-        pageId === "songPage"
-    ) {
-
-        if (
-            typeof resetSongPage ===
-            "function"
-        ) {
-
-            resetSongPage();
-
-        }
-
-    }
-
-
-}
 
