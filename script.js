@@ -314,20 +314,10 @@ function openDoor() {
 ================================= */
 
 const startDate = new Date(2026, 0, 1);
-
-// Actual date:
 const targetDate = new Date(2026, 2, 1);
-
-// Accepted range:
-// February 25 → March 7
 
 const validFrom = new Date(2026, 1, 25);
 const validUntil = new Date(2026, 2, 7);
-
-
-/* =================================
-   DATE FUNCTIONS
-================================= */
 
 const monthNames = [
     "January",
@@ -345,68 +335,66 @@ const monthNames = [
 ];
 
 
+/* =================================
+   DATE HELPERS
+================================= */
+
 function dateFromDay(day) {
 
     const date = new Date(startDate);
 
     date.setDate(
-        startDate.getDate() + day
+        startDate.getDate() + Number(day)
     );
 
     return date;
-
 }
 
 
 function formatDate(date) {
 
     return `${monthNames[date.getMonth()]} ${date.getDate()}`;
-
 }
 
 
 /* =================================
-   UPDATE SLIDER
+   UPDATE DATE
 ================================= */
 
 function updateDate() {
 
+    if (!dateSlider || !displayDate || !timelineProgress) {
+        return;
+    }
+
     const day = Number(dateSlider.value);
 
-    const currentDate =
-        dateFromDay(day);
-
-
-    // Update displayed date
+    const currentDate = dateFromDay(day);
 
     displayDate.textContent =
         formatDate(currentDate);
-
-
-    // Update progress line
 
     const percentage =
         (day / Number(dateSlider.max)) * 100;
 
     timelineProgress.style.width =
         `${percentage}%`;
-
 }
 
 
 /* =================================
-   SLIDER EVENT
+   SLIDER
 ================================= */
 
-dateSlider.addEventListener(
-    "input",
-    updateDate
-);
+if (dateSlider) {
 
+    dateSlider.addEventListener(
+        "input",
+        updateDate
+    );
 
-// Initial state
-
-updateDate();
+    updateDate();
+}
 
 
 /* =================================
@@ -415,16 +403,11 @@ updateDate();
 
 const wrongReplies = [
     "غلط يا سكاكر.",
-
     'لا يا <span class="english">süßigkeiten</span>.',
-    
     "ركزي يا قرطاس النكد.",
-    
     "مستفزة والله.",
-    
     "ارجعي خدي أدويتك تاني."
 ];
-
 
 let attempts = 0;
 
@@ -433,95 +416,136 @@ let attempts = 0;
    CONFIRM DATE
 ================================= */
 
-confirmDate.addEventListener("click", () => {
+if (confirmDate) {
 
-    const day =
-        Number(dateSlider.value);
+    confirmDate.addEventListener(
+        "click",
+        () => {
 
+            if (!dateSlider) {
+                return;
+            }
 
-    const selectedDate =
-        dateFromDay(day);
+            const day =
+                Number(dateSlider.value);
 
+            const selectedDate =
+                dateFromDay(day);
 
-    const isCorrect =
-        selectedDate >= validFrom &&
-        selectedDate <= validUntil;
-
-
-    /* =============================
-       CORRECT
-    ============================= */
-
-    if (isCorrect) {
-
-        confirmDate.style.opacity = "0";
-        confirmDate.style.pointerEvents = "none";
-
-        wrongMessage.classList.remove(
-            "visible"
-        );
+            const isCorrect =
+                selectedDate >= validFrom &&
+                selectedDate <= validUntil;
 
 
-        // Calculate March 1 position
+            /* =========================
+               WRONG
+            ========================= */
 
-        const targetDay =
-            Math.round(
-                (targetDate - startDate) /
-                (1000 * 60 * 60 * 24)
-            );
+            if (!isCorrect) {
+
+                attempts++;
+
+                const replyIndex =
+                    Math.min(
+                        attempts - 1,
+                        wrongReplies.length - 1
+                    );
+
+                if (wrongMessage) {
+
+                    wrongMessage.innerHTML =
+                        wrongReplies[replyIndex];
+
+                    wrongMessage.classList.remove(
+                        "visible"
+                    );
+
+                    void wrongMessage.offsetWidth;
+
+                    wrongMessage.classList.add(
+                        "visible"
+                    );
+                }
+
+                return;
+            }
 
 
-        const startValue =
-            Number(dateSlider.value);
+            /* =========================
+               CORRECT
+            ========================= */
+
+            confirmDate.style.opacity = "0";
+            confirmDate.style.pointerEvents = "none";
+
+            if (wrongMessage) {
+
+                wrongMessage.classList.remove(
+                    "visible"
+                );
+            }
 
 
-        const duration = 700;
+            /* =========================
+               MOVE TO MARCH 1
+            ========================= */
 
-        const startTime =
-            performance.now();
-
-
-        function animateToTarget(time) {
-
-            const elapsed =
-                time - startTime;
-
-
-            const progress =
-                Math.min(
-                    elapsed / duration,
-                    1
+            const targetDay =
+                Math.round(
+                    (targetDate - startDate) /
+                    (1000 * 60 * 60 * 24)
                 );
 
+            const startValue =
+                Number(dateSlider.value);
 
-            // Ease out
+            const duration = 700;
 
-            const eased =
-                1 -
-                Math.pow(
-                    1 - progress,
-                    3
-                );
+            const startTime =
+                performance.now();
 
 
-            const value =
-                startValue +
-                (targetDay - startValue) *
-                eased;
+            function animateToTarget(time) {
+
+                const elapsed =
+                    time - startTime;
+
+                const progress =
+                    Math.min(
+                        elapsed / duration,
+                        1
+                    );
+
+                const eased =
+                    1 -
+                    Math.pow(
+                        1 - progress,
+                        3
+                    );
+
+                const value =
+                    startValue +
+                    (targetDay - startValue) *
+                    eased;
+
+                dateSlider.value = value;
+
+                updateDate();
 
 
-            dateSlider.value = value;
+                if (progress < 1) {
 
-            updateDate();
+                    requestAnimationFrame(
+                        animateToTarget
+                    );
+
+                    return;
+                }
 
 
-            if (progress < 1) {
-
-                requestAnimationFrame(
-                    animateToTarget
-                );
-
-            } else {
+                /* =====================
+                   FINISH
+                ===================== */
 
                 dateSlider.value =
                     targetDay;
@@ -529,77 +553,57 @@ confirmDate.addEventListener("click", () => {
                 updateDate();
 
 
-                // Show success
+                window.setTimeout(
+                    () => {
 
-                setTimeout(() => {
+                        if (successMessage) {
 
-    successMessage.classList.add(
-        "visible"
-    );
+                            successMessage.classList.add(
+                                "visible"
+                            );
+                        }
 
 
-    setTimeout(() => {
+                        window.setTimeout(
+                            () => {
 
-        whenPage.classList.remove("active");
+                                whenPage.classList.remove(
+                                    "active"
+                                );
 
-        setTimeout(() => {
 
-            roomPage.classList.add("active");
+                                window.setTimeout(
+                                    () => {
 
-            startRoom();
+                                        roomPage.classList.add(
+                                            "active"
+                                        );
 
-        }, 500);
+                                        startRoom();
 
-    }, 1800);
+                                    },
+                                    500
+                                );
 
-}, 500);
+                            },
+                            1800
+                        );
+
+                    },
+                    500
+                );
 
             }
 
+
+            requestAnimationFrame(
+                animateToTarget
+            );
+
         }
-
-
-        requestAnimationFrame(
-            animateToTarget
-        );
-
-
-        return;
-    }
-
-
-    /* =============================
-       WRONG
-    ============================= */
-
-    attempts++;
-
-
-    const replyIndex =
-        Math.min(
-            attempts - 1,
-            wrongReplies.length - 1
-        );
-
-
-    wrongMessage.innerHTML = wrongReplies[replyIndex];
-
-
-    // Restart animation
-
-    wrongMessage.classList.remove(
-        "visible"
     );
 
-
-    void wrongMessage.offsetWidth;
-
-
-    wrongMessage.classList.add(
-        "visible"
-    );
-
-});
+}
 
 /* =================================
    PAGE 03 — LITTLE ROOM
@@ -2133,7 +2137,7 @@ songAudio.addEventListener(
 
 
 /* =================================
-   AUDIO ENDED
+   PAGE 04 → PAGE 05
 ================================= */
 
 songAudio.addEventListener(
@@ -2153,6 +2157,41 @@ songAudio.addEventListener(
 
         updateMessages(
             Number.MAX_SAFE_INTEGER
+        );
+
+
+        /*
+         * Give the final message a moment,
+         * then move to Page 05.
+         */
+
+        window.setTimeout(
+            () => {
+
+                songPage.classList.remove(
+                    "active"
+                );
+
+                congratulationsPage.classList.add(
+                    "active"
+                );
+
+
+                /*
+                 * Reset Page 05 for a fresh start.
+                 */
+
+                if (
+                    typeof window.startCongratulationsPage ===
+                    "function"
+                ) {
+
+                    window.startCongratulationsPage();
+
+                }
+
+            },
+            1800
         );
 
     }
