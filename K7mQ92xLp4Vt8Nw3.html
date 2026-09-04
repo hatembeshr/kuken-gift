@@ -1,819 +1,2167 @@
-<!DOCTYPE html>
-<html lang="en">
+/* =================================
+   ELEMENTS
+================================= */
 
-<head>
+const openingPage = document.getElementById("openingPage");
+const whenPage = document.getElementById("whenPage");
 
-    <meta charset="UTF-8">
+const door =
+    document.getElementById("door");
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
+const doorHint =
+    document.getElementById("doorHint");
 
-    <title></title>
+const doorKnock =
+    document.getElementById("doorKnock");
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="page05.css">
-    <link rel="stylesheet" href="final.css">
+const dateSlider = document.getElementById("dateSlider");
+const displayDate = document.getElementById("displayDate");
+const timelineProgress = document.getElementById("timelineProgress");
 
-</head>
+const confirmDate = document.getElementById("confirmDate");
+const wrongMessage = document.getElementById("wrongMessage");
 
+const successMessage = document.getElementById("successMessage");
 
-<body>
+const roomPage = document.getElementById("roomPage");
 
+const toyField = document.getElementById("toyField");
 
-    <!-- =====================================================
-         DEV NAVIGATION
-    ====================================================== -->
+const roomCounter = document.getElementById("roomCounter");
 
-    <div id="devNavigation">
+const roomHint = document.getElementById("roomHint");
 
-        <button data-page="openingPage">01</button>
+const roomComplete = document.getElementById("roomComplete");
 
-        <button data-page="whenPage">02</button>
+const roomContinue = document.getElementById("roomContinue");
 
-        <button data-page="roomPage">03</button>
+/* =================================
+   PAGE 01 — THE DOOR
+================================= */
 
-        <button data-page="songPage">04</button>
+let knockCount = 0;
 
-        <button data-page="congratulationsPage">05</button>
+let knockResetTimer = null;
 
-        <button data-page="finalPage">06</button>
+let doorOpening = false;
 
-    </div>
 
+const KNOCK_LIMIT = 3;
 
-    <main class="app" id="app">
+const KNOCK_WINDOW = 1800;
 
 
-        <!-- =====================================================
-             PAGE 01 — OPENING
-        ====================================================== -->
+/* =================================
+   KNOCK ON THE DOOR
+================================= */
 
-        <section
-            class="page opening-page active"
-            id="openingPage"
-        >
+door?.addEventListener(
+    "click",
+    () => {
 
-            <div class="opening">
+        if (doorOpening) {
+            return;
+        }
 
-                <button
-                    class="open-trigger"
-                    id="openTrigger"
-                >
-                    open
-                </button>
 
+        /*
+         * Reset the knock sequence if
+         * the user takes too long.
+         */
 
-                <p
-                    class="question"
-                    id="question"
-                >
-                    are you sure?
-                </p>
+        window.clearTimeout(
+            knockResetTimer
+        );
 
-            </div>
 
+        knockCount++;
 
-            <button
-                class="tap-hint"
-                id="tapHint"
-            >
-                keep going
-            </button>
 
-        </section>
+        /* =============================
+           DOOR SHAKE
+        ============================= */
 
+        door.classList.remove(
+            "knock"
+        );
 
-        <!-- =====================================================
-             PAGE 02 — WHEN?
-        ====================================================== -->
 
-        <section
-            class="page when-page"
-            id="whenPage"
-        >
+        /*
+         * Force the animation to restart.
+         */
 
-            <div class="when-content">
+        void door.offsetWidth;
 
-                <p class="when-question">
-                    Can you find where it started?
-                </p>
 
+        door.classList.add(
+            "knock"
+        );
 
-                <div class="date-picker">
 
+        door.addEventListener(
+            "animationend",
+            () => {
 
-                    <div class="date-display">
+                door.classList.remove(
+                    "knock"
+                );
 
-                        <span
-                            class="display-date"
-                            id="displayDate"
-                        >
-                            January 1
-                        </span>
+            },
+            {
+                once: true
+            }
+        );
 
 
-                        <span class="display-year">
-                            2026
-                        </span>
+        /* =============================
+           KNOCK MESSAGE
+        ============================= */
 
-                    </div>
+        if (doorKnock) {
 
+            doorKnock.textContent =
+                knockCount === 1
+                    ? "knock."
+                    : knockCount === 2
+                        ? "knock... knock."
+                        : "knock... knock... knock.";
 
-                    <div class="timeline">
+            doorKnock.classList.add(
+                "show"
+            );
 
-                        <div class="timeline-line"></div>
 
-                        <div
-                            class="timeline-progress"
-                            id="timelineProgress"
-                        ></div>
+            window.setTimeout(
+                () => {
 
+                    doorKnock.classList.remove(
+                        "show"
+                    );
 
-                        <input
-                            type="range"
-                            id="dateSlider"
-                            min="0"
-                            max="364"
-                            value="0"
-                            step="0.01"
-                            aria-label="Choose a date"
-                        >
+                },
+                700
+            );
+        }
 
 
-                        <div class="dates">
+        /* =============================
+           HINT
+        ============================= */
 
-                            <span>JAN</span>
-                            <span>FEB</span>
-                            <span>MAR</span>
-                            <span>APR</span>
-                            <span>MAY</span>
-                            <span>JUN</span>
-                            <span>JUL</span>
-                            <span>AUG</span>
-                            <span>SEP</span>
-                            <span>OCT</span>
-                            <span>NOV</span>
-                            <span>DEC</span>
+        if (doorHint) {
 
-                        </div>
+            if (knockCount === 1) {
 
-                    </div>
+                doorHint.textContent =
+                    "again.";
 
+            } else if (knockCount === 2) {
 
-                    <button
-                        class="confirm-date"
-                        id="confirmDate"
-                    >
-                        I think I found it
-                    </button>
+                doorHint.textContent =
+                    "one more.";
 
+            } else {
 
-                    <p
-                        class="wrong-message"
-                        id="wrongMessage"
-                    ></p>
+                doorHint.textContent =
+                    "";
 
+            }
 
-                    <div
-                        class="success-message"
-                        id="successMessage"
-                    >
+        }
 
-                        <span>
-                            There you are.
-                        </span>
 
-                    </div>
+        /* =============================
+           THREE KNOCKS
+        ============================= */
 
-                </div>
+        if (
+            knockCount >=
+            KNOCK_LIMIT
+        ) {
 
-            </div>
+            openDoor();
 
-        </section>
+            return;
+        }
 
 
-        <!-- =====================================================
-             PAGE 03 — LITTLE ROOM
-        ====================================================== -->
+        /* =============================
+           RESET SEQUENCE
+        ============================= */
 
-        <section
-            class="page room-page"
-            id="roomPage"
-        >
+        knockResetTimer =
+            window.setTimeout(
+                () => {
 
-            <div class="room">
+                    knockCount = 0;
 
-                <div class="room-floor"></div>
 
+                    if (doorHint) {
 
-                <div
-                    class="room-counter"
-                    id="roomCounter"
-                >
-                    0 / 14
-                </div>
+                        doorHint.textContent =
+                            "knock on the door";
 
+                    }
 
-                <div
-                    class="room-hint"
-                    id="roomHint"
-                >
-                    look around
-                </div>
+                },
+                KNOCK_WINDOW
+            );
 
+    }
+);
 
-                <div
-                    class="toy-field"
-                    id="toyField"
-                ></div>
 
+/* =================================
+   OPEN THE DOOR
+================================= */
 
-                <div
-                    class="room-complete"
-                    id="roomComplete"
-                >
+function openDoor() {
 
-                    <span>
-                        you found everything.
-                    </span>
+    doorOpening = true;
 
+    window.clearTimeout(
+        knockResetTimer
+    );
 
-                    <button id="roomContinue">
-                        keep going
-                    </button>
+    knockCount = KNOCK_LIMIT;
 
-                </div>
 
-            </div>
+    /* =============================
+       HIDE TEXT
+    ============================= */
 
-        </section>
+    if (doorHint) {
+        doorHint.textContent = "";
+    }
 
 
-        <!-- =====================================================
-             PAGE 04 — THE SONG
-        ====================================================== -->
+    /* =============================
+       OPEN THE DOOR
+    ============================= */
 
-        <section
-            class="page song-page"
-            id="songPage"
-        >
+    openingPage.classList.add(
+        "door-open"
+    );
 
-            <div class="song-layout">
 
+    /* =============================
+       START ZOOM
+    ============================= */
 
-                <!-- SONG SIDE -->
+    window.setTimeout(
+        () => {
 
-                <div class="song-side">
+            openingPage.classList.add(
+                "door-zoom"
+            );
 
-                    <div class="song-meta">
+        },
+        700
+    );
 
-                        <div class="song-kicker">
-                            one last song
-                        </div>
 
+    /* =============================
+       MOVE TO PAGE 02
+       WHILE ZOOM IS STILL RUNNING
+    ============================= */
 
-                        <h2>
-                            قبل أي كلمة
-                        </h2>
+    window.setTimeout(
+        () => {
 
+            openingPage.classList.remove(
+                "active"
+            );
 
-                        <p>
-                            مصطفى قمر
-                        </p>
+            whenPage.classList.add(
+                "active"
+            );
 
-                    </div>
+        },
+        1450
+    );
+}
 
+/* =================================
+   PAGE 02 — DATE FINDER
+================================= */
 
-                    <div
-                        class="lyrics-window"
-                        id="lyricsWindow"
-                    >
+const startDate = new Date(2026, 0, 1);
 
-                        <div
-                            class="lyrics-list"
-                            id="lyricsList"
-                        ></div>
+// Actual date:
+const targetDate = new Date(2026, 2, 1);
 
-                    </div>
+// Accepted range:
+// February 25 → March 7
 
+const validFrom = new Date(2026, 1, 25);
+const validUntil = new Date(2026, 2, 7);
 
-                    <div class="player">
 
-                        <div class="progress-wrap">
+/* =================================
+   DATE FUNCTIONS
+================================= */
 
-                            <div
-                                class="progress-fill"
-                                id="songProgress"
-                            ></div>
+const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+];
 
-                        </div>
 
+function dateFromDay(day) {
 
-                        <div class="player-bottom">
+    const date = new Date(startDate);
 
-                            <span id="currentTime">
-                                0:00
-                            </span>
+    date.setDate(
+        startDate.getDate() + day
+    );
 
+    return date;
 
-                            <button
-                                type="button"
-                                class="play-button"
-                                id="playButton"
-                                aria-label="Play"
-                            >
-                                ▶
-                            </button>
+}
 
 
-                            <span id="duration">
-                                0:00
-                            </span>
+function formatDate(date) {
 
-                        </div>
+    return `${monthNames[date.getMonth()]} ${date.getDate()}`;
 
-                    </div>
+}
 
-                </div>
 
+/* =================================
+   UPDATE SLIDER
+================================= */
 
-                <!-- CHAT SIDE -->
+function updateDate() {
 
-                <div class="chat-side">
+    const day = Number(dateSlider.value);
 
-                    <div class="chat-header">
+    const currentDate =
+        dateFromDay(day);
 
-                        <div class="chat-avatar">
-                            ك
-                        </div>
 
+    // Update displayed date
 
-                        <div>
+    displayDate.textContent =
+        formatDate(currentDate);
 
-                            <strong>
-                                كوكن
-                            </strong>
 
-                            <span>
-                                listening with you
-                            </span>
+    // Update progress line
 
-                        </div>
+    const percentage =
+        (day / Number(dateSlider.max)) * 100;
 
-                    </div>
+    timelineProgress.style.width =
+        `${percentage}%`;
 
+}
 
-                    <div
-                        class="chat-messages"
-                        id="chatMessages"
-                        aria-live="polite"
-                    ></div>
 
-                </div>
+/* =================================
+   SLIDER EVENT
+================================= */
 
-            </div>
+dateSlider.addEventListener(
+    "input",
+    updateDate
+);
 
 
-            <!-- AUDIO -->
+// Initial state
 
-            <audio
-                id="songAudio"
-                preload="auto"
-                src="قبل_اي_كلمة.m4a"
-            ></audio>
+updateDate();
 
-        </section>
 
+/* =================================
+   WRONG ANSWERS
+================================= */
 
-        <!-- =====================================================
-             PAGE 05 — CONGRATULATIONS
-        ====================================================== -->
+const wrongReplies = [
+    "غلط يا سكاكر.",
 
-        <section
-            class="page congratulations-page"
-            id="congratulationsPage"
-        >
+    'لا يا <span class="english">süßigkeiten</span>.',
+    
+    "ركزي يا قرطاس النكد.",
+    
+    "مستفزة والله.",
+    
+    "ارجعي خدي أدويتك تاني."
+];
 
-            <div class="congratulations-scene">
 
+let attempts = 0;
 
-                <!-- PARTICLES -->
 
-                <div class="celebration-particle p1"></div>
-                <div class="celebration-particle p2"></div>
-                <div class="celebration-particle p3"></div>
-                <div class="celebration-particle p4"></div>
-                <div class="celebration-particle p5"></div>
-                <div class="celebration-particle p6"></div>
+/* =================================
+   CONFIRM DATE
+================================= */
 
+confirmDate.addEventListener("click", () => {
 
-                <!-- COUPLE -->
+    const day =
+        Number(dateSlider.value);
 
-                <div class="couple-area">
 
-                    <img
-                        src="couple.png"
-                        alt=""
-                        class="couple-image"
-                    >
+    const selectedDate =
+        dateFromDay(day);
 
 
-                    <h1>
-                        مبروك يا سكاكر 🤍
-                    </h1>
+    const isCorrect =
+        selectedDate >= validFrom &&
+        selectedDate <= validUntil;
 
-                </div>
 
+    /* =============================
+       CORRECT
+    ============================= */
 
-                <!-- RING -->
+    if (isCorrect) {
 
-                <button
-                    class="ring-button"
-                    id="ringButton"
-                    type="button"
-                    aria-label="اضغطي هنا"
-                >
+        confirmDate.style.opacity = "0";
+        confirmDate.style.pointerEvents = "none";
 
-                    <img
-                        src="diamond-ring.png"
-                        alt=""
-                    >
+        wrongMessage.classList.remove(
+            "visible"
+        );
 
-                </button>
 
+        // Calculate March 1 position
 
-                <!-- LETTER -->
+        const targetDay =
+            Math.round(
+                (targetDate - startDate) /
+                (1000 * 60 * 60 * 24)
+            );
 
-                <div
-                    class="blessing-letter"
-                    id="blessingLetter"
-                >
 
-                    <div class="letter-paper">
+        const startValue =
+            Number(dateSlider.value);
 
-                        <div class="letter-content">
 
+        const duration = 700;
 
-                            <span class="letter-greeting">
-                                سكاكر،
-                            </span>
+        const startTime =
+            performance.now();
 
 
-                            <p>
-                                مباركتي ليكي...
-                            </p>
+        function animateToTarget(time) {
 
+            const elapsed =
+                time - startTime;
 
-                            <p>
-                                ربنا يتمملك على خير
-                                ويكتبلك في اللي جاي
-                                كل الخير والسعادة
-                                وراحة البال.
-                            </p>
 
+            const progress =
+                Math.min(
+                    elapsed / duration,
+                    1
+                );
 
-                            <p>
-                                وتفضلي دايمًا مبسوطة
-                                ومطمنة وفرحانة.
-                            </p>
 
+            // Ease out
 
-                            <span class="letter-signature">
-                                كوكن 🤍
-                            </span>
+            const eased =
+                1 -
+                Math.pow(
+                    1 - progress,
+                    3
+                );
 
 
-                        </div>
+            const value =
+                startValue +
+                (targetDay - startValue) *
+                eased;
 
-                    </div>
 
-                </div>
+            dateSlider.value = value;
 
+            updateDate();
 
-                <!-- =================================================
-                     LAST PAGE GATE
-                ================================================== -->
 
-                <div
-                    class="last-page-gate"
-                    id="lastPageGate"
-                >
+            if (progress < 1) {
 
-                    <div class="last-page-gate-content">
+                requestAnimationFrame(
+                    animateToTarget
+                );
 
+            } else {
 
-                        <!-- QUESTION -->
+                dateSlider.value =
+                    targetDay;
 
-                        <div id="readyQuestion">
+                updateDate();
 
 
-                            <p class="last-page-eyebrow">
-                                one last step.
-                            </p>
+                // Show success
 
+                setTimeout(() => {
 
-                            <h2 class="last-page-question">
-                                are you ready for the last page?
-                            </h2>
+    successMessage.classList.add(
+        "visible"
+    );
 
 
-                            <div class="last-page-actions">
+    setTimeout(() => {
 
+        whenPage.classList.remove("active");
 
-                                <button
-                                    type="button"
-                                    class="last-page-button primary"
-                                    id="yesLastPage"
-                                >
-                                    YES
-                                </button>
+        setTimeout(() => {
 
+            roomPage.classList.add("active");
 
-                                <button
-                                    type="button"
-                                    class="last-page-button"
-                                    id="noLastPage"
-                                >
-                                    NO
-                                </button>
+            startRoom();
 
+        }, 500);
 
-                            </div>
+    }, 1800);
 
+}, 500);
 
-                        </div>
+            }
 
+        }
 
-                        <!-- NO MESSAGE -->
 
-                        <div
-                            class="last-page-no-message"
-                            id="noMessage"
-                        >
+        requestAnimationFrame(
+            animateToTarget
+        );
 
 
-                            <h2 class="last-page-no-title">
-                                hey… it's okay. 🤍
-                            </h2>
+        return;
+    }
 
 
-                            <p class="last-page-no-body">
+    /* =============================
+       WRONG
+    ============================= */
 
-                                you don't have to be nervous.<br>
+    attempts++;
 
-                                there's nothing scary waiting for you.<br><br>
 
-                                it's just one last little thing<br>
-                                I wanted you to see.<br><br>
+    const replyIndex =
+        Math.min(
+            attempts - 1,
+            wrongReplies.length - 1
+        );
 
-                                so take a breath…<br>
 
-                                and let's go together.
+    wrongMessage.innerHTML = wrongReplies[replyIndex];
 
-                            </p>
 
+    // Restart animation
 
-                            <button
-                                type="button"
-                                class="last-page-button primary ready-again"
-                                id="readyAgain"
-                            >
-                                I'M READY
-                            </button>
+    wrongMessage.classList.remove(
+        "visible"
+    );
 
 
-                        </div>
+    void wrongMessage.offsetWidth;
 
 
-                    </div>
+    wrongMessage.classList.add(
+        "visible"
+    );
 
-                </div>
+});
 
+/* =================================
+   PAGE 03 — LITTLE ROOM
+================================= */
 
-            </div>
+const toys = [
 
-        </section>
+    {
+        image: "bird.png",
+        text: "كوكن اللي هو أنا يعني"
+    },
 
+    {
+        image: "bully.png",
+        text: "تنمرنا على الجروب طبعًا"
+    },
 
-<!-- =====================================================
-     PAGE 06 — FINAL LETTER
-====================================================== -->
+    {
+        image: "bye.png",
+        text: "سلاوداع"
+    },
 
-<section
-    class="page final-page"
-    id="finalPage"
->
+    {
+        image: "candy.png",
+        text: "سكاكر اللي هي إنتي يعني"
+    },
 
-    <div class="final-page-content">
+    {
+        image: "chat.png",
+        text: "المأوى اللي كان بيلمنا"
+    },
 
+    {
+        image: "disgusted.png",
+        text: "مش طايقاك/طايقك"
+    },
 
-        <!-- INTRO -->
+    {
+        image: "germany.png",
+        text: "مين كان يتخيل إن كورس الألماني هيكون سبب في كل ده؟"
+    },
 
-        <header class="final-intro">
+    {
+        image: "ghost.png",
+        text: "اسمعي Supernatural!!"
+    },
 
-            <p class="final-eyebrow">
-                one last thing.
-            </p>
+    {
+        image: "house.png",
+        text: "مشاكل البيت اللي عمرها ما خلصت"
+    },
 
-            <h1 class="final-title">
-                take your time.
-            </h1>
+    {
+        image: "hug.png",
+        text: "وقت الضحك، وقت الزعل، وقت الرغي اللي ملوش لازمة... كنا دايمًا موجودين عشان بعض"
+    },
 
-            <p class="final-subtitle">
-                there's no rush.
-            </p>
+    {
+        image: "karaoke.png",
+        text: "الطرب اللي كنا بنطرب بعض بيه"
+    },
 
-        </header>
+    {
+        image: "sleeping.png",
+        text: "وقت الننة"
+    },
 
+    {
+        image: "youtube.png",
+        text: "الفيديوهات والمسلسلات اللي تراكمت علينا ومسمعناهاش"
+    },
 
-        <!-- LETTER -->
+    {
+        image: "sad.png",
+        text: "قرطاث النكد"
+    }
 
-        <article class="final-letter">
+];
 
-            <p class="final-paragraph placeholder">
-                [هنا هتبدأ الرسالة اللي هتكتبها بعدين.]
-            </p>
+let discoveredCount = 0;
 
-            <p class="final-paragraph placeholder">
-                [الفقرة الثانية.]
-            </p>
+let nextToyIndex = 0;
 
-            <p class="final-paragraph placeholder">
-                [الفقرة الثالثة.]
-            </p>
 
-            <p class="final-paragraph placeholder">
-                [والباقي هنا... مهما كانت الرسالة طويلة.]
-            </p>
 
-        </article>
+/* =================================
+   START ROOM
+================================= */
 
+function startRoom() {
 
-        <!-- SIGNATURE -->
+    toyField.innerHTML = "";
 
-        <footer class="final-signature">
+    discoveredCount = 0;
 
-            <div class="final-signature-line"></div>
+    nextToyIndex = 0;
 
-            <p class="final-signature-text">
-                — Koken
-                <span class="final-signature-heart">🤍</span>
-            </p>
+    occupiedPositions.length = 0;
 
-        </footer>
+    roomCounter.textContent = "0 / 14";
 
-    </div>
+    roomComplete.classList.remove("visible");
 
+    roomHint.style.opacity = "1";
 
-    <!-- =====================================================
-         CHRISTMAS TREE EASTER EGG
-    ====================================================== -->
 
-    <button
-        type="button"
-        class="final-tree-button"
-        aria-label="something is waiting"
-    >
+    // Every visit gets a completely new layout.
+
+    for (let i = 0; i < 5; i++) {
+
+        setTimeout(() => {
+
+            revealNextToy();
+
+        }, i * 180);
+
+    }
+
+}
+
+
+/* =================================
+   REVEAL TOY
+================================= */
+
+function revealNextToy() {
+
+    if (nextToyIndex >= toys.length) {
+
+        return;
+
+    }
+
+
+    const toyData =
+        toys[nextToyIndex];
+
+
+    const toy =
+        document.createElement("button");
+
+
+    toy.type = "button";
+
+    toy.className = "toy";
+
+    toy.dataset.index =
+        nextToyIndex;
+
+
+    toy.innerHTML = `
 
         <img
-            src="christmas-tree.png"
+            src="${toyData.image}"
             alt=""
-            class="final-tree-image"
+            draggable="false"
         >
 
-    </button>
+        <span class="toy-shadow"></span>
+
+        <span class="toy-message">
+            ${toyData.text}
+        </span>
+
+    `;
 
 
-    <!-- COUNTDOWN -->
+    /* -------------------------
+       RANDOM POSITION
+    ------------------------- */
 
-    <div
-        class="final-tree-popup"
-        role="dialog"
-        aria-label="something is waiting"
-    >
-
-        <button
-            type="button"
-            class="final-tree-popup-close"
-            aria-label="close"
-        >
-            ×
-        </button>
+    const position =
+        getRandomPosition();
 
 
-        <h2 class="final-tree-popup-title">
-            you found something. 🤍
-        </h2>
+    toy.style.left =
+        `${position.x}%`;
+
+    toy.style.top =
+        `${position.y}%`;
 
 
-        <p class="final-tree-popup-text">
-            but it's not time yet.
-        </p>
+    /* -------------------------
+       RANDOM ROTATION
+    ------------------------- */
+
+    const rotation =
+        -12 +
+        Math.random() * 24;
 
 
-        <p class="final-countdown-date">
-            December 30, 2026
-        </p>
+    toy.style.setProperty(
+        "--rotation",
+        `${rotation}deg`
+    );
 
 
-        <div class="final-countdown">
+    /* -------------------------
+       RANDOM FLOAT
+    ------------------------- */
+
+    const floatDuration =
+        3.2 +
+        Math.random() * 2;
 
 
-            <div class="final-countdown-unit">
-
-                <span
-                    class="final-countdown-number"
-                    data-countdown="months"
-                >
-                    0
-                </span>
-
-                <span class="final-countdown-label">
-                    months
-                </span>
-
-            </div>
+    const floatDelay =
+        Math.random() * -3;
 
 
-            <div class="final-countdown-unit">
+    toy.style.setProperty(
+        "--float-duration",
+        `${floatDuration}s`
+    );
 
-                <span
-                    class="final-countdown-number"
-                    data-countdown="days"
-                >
-                    0
-                </span>
-
-                <span class="final-countdown-label">
-                    days
-                </span>
-
-            </div>
+    toy.style.setProperty(
+        "--float-delay",
+        `${floatDelay}s`
+    );
 
 
-            <div class="final-countdown-unit">
+    /* -------------------------
+       RANDOM ENTRANCE
+    ------------------------- */
 
-                <span
-                    class="final-countdown-number"
-                    data-countdown="hours"
-                >
-                    00
-                </span>
-
-                <span class="final-countdown-label">
-                    hours
-                </span>
-
-            </div>
+    const entrances = [
+        "enter-from-left",
+        "enter-from-right",
+        "enter-from-top",
+        "enter-from-bottom"
+    ];
 
 
-            <div class="final-countdown-unit">
-
-                <span
-                    class="final-countdown-number"
-                    data-countdown="minutes"
-                >
-                    00
-                </span>
-
-                <span class="final-countdown-label">
-                    minutes
-                </span>
-
-            </div>
+    const entrance =
+        entrances[
+            Math.floor(
+                Math.random() *
+                entrances.length
+            )
+        ];
 
 
-        </div>
-
-    </div>
-
-    <audio
-    id="finalAudio"
-    preload="auto"
-    src="final.m4a"
-></audio>
-
-</section>
+    toy.classList.add(
+        entrance
+    );
 
 
-    </main>
+    toyField.appendChild(toy);
 
 
-    <!-- =====================================================
-         SCRIPTS
-    ====================================================== -->
+    /* -------------------------
+       SHOW
+    ------------------------- */
 
-    <script src="script.js"></script>
+    requestAnimationFrame(() => {
 
-    <script src="page05.js"></script>
+        requestAnimationFrame(() => {
 
-    <script src="final.js"></script>
+            toy.classList.add("visible");
 
-    <script src="dev-nav.js"></script>
+        });
+
+    });
 
 
-</body>
+    /* -------------------------
+       INTERACTION
+    ------------------------- */
 
-</html>
+    setupToyInteraction(toy);
+
+
+    nextToyIndex++;
+
+}
+
+
+/* =================================
+   DRAGGABLE TOYS
+================================= */
+
+function setupToyInteraction(toy) {
+
+    let isDragging = false;
+
+    let hasMoved = false;
+
+    let startX = 0;
+    let startY = 0;
+
+    let startLeft = 0;
+    let startTop = 0;
+
+
+    toy.addEventListener(
+        "pointerdown",
+        (event) => {
+
+            isDragging = true;
+
+            hasMoved = false;
+
+            toy.classList.add(
+                "dragging"
+            );
+
+            toy.setPointerCapture(
+                event.pointerId
+            );
+
+
+            startX =
+                event.clientX;
+
+            startY =
+                event.clientY;
+
+
+            startLeft =
+                parseFloat(
+                    toy.style.left
+                );
+
+            startTop =
+                parseFloat(
+                    toy.style.top
+                );
+
+        }
+    );
+
+
+    toy.addEventListener(
+        "pointermove",
+        (event) => {
+
+            if (!isDragging) {
+                return;
+            }
+
+
+            const dx =
+                event.clientX -
+                startX;
+
+            const dy =
+                event.clientY -
+                startY;
+
+
+            if (
+                Math.abs(dx) > 5 ||
+                Math.abs(dy) > 5
+            ) {
+
+                hasMoved = true;
+
+            }
+
+
+            const x =
+                startLeft +
+                (dx /
+                    window.innerWidth) *
+                100;
+
+
+            const y =
+                startTop +
+                (dy /
+                    window.innerHeight) *
+                100;
+
+
+            // Keep toy inside the screen.
+
+            const boundedX =
+                Math.max(
+                    6,
+                    Math.min(
+                        94,
+                        x
+                    )
+                );
+
+
+            const boundedY =
+                Math.max(
+                    10,
+                    Math.min(
+                        88,
+                        y
+                    )
+                );
+
+
+            toy.style.left =
+                `${boundedX}%`;
+
+            toy.style.top =
+                `${boundedY}%`;
+
+
+            // Update bubble position while dragging.
+
+            if (
+                toy.classList.contains(
+                    "show-message"
+                )
+            ) {
+
+                adjustBubblePosition(
+                    toy
+                );
+
+            }
+
+        }
+    );
+
+
+    toy.addEventListener(
+        "pointerup",
+        (event) => {
+
+            if (!isDragging) {
+                return;
+            }
+
+
+            isDragging = false;
+
+            toy.classList.remove(
+                "dragging"
+            );
+
+
+            try {
+
+                toy.releasePointerCapture(
+                    event.pointerId
+                );
+
+            } catch {}
+
+        }
+    );
+
+
+    toy.addEventListener(
+        "pointercancel",
+        () => {
+
+            isDragging = false;
+
+            toy.classList.remove(
+                "dragging"
+            );
+
+        }
+    );
+
+
+    /* -------------------------
+       CLICK / DISCOVER
+    ------------------------- */
+
+    toy.addEventListener(
+        "click",
+        () => {
+
+            // If the user dragged it,
+            // don't treat that as a click.
+
+            if (hasMoved) {
+
+                hasMoved = false;
+
+                return;
+
+            }
+
+
+            discoverToy(toy);
+
+        }
+    );
+
+}
+
+
+/* =================================
+   RANDOM TOY POSITIONS
+================================= */
+
+const occupiedPositions = [];
+
+
+function getRandomPosition() {
+
+    const minX = 10;
+    const maxX = 90;
+
+    const minY = 16;
+    const maxY = 82;
+
+    const minDistance = 15;
+
+
+    for (let attempt = 0; attempt < 80; attempt++) {
+
+        const x =
+            minX +
+            Math.random() *
+            (maxX - minX);
+
+        const y =
+            minY +
+            Math.random() *
+            (maxY - minY);
+
+
+        const isTooClose =
+            occupiedPositions.some(position => {
+
+                const dx =
+                    x - position.x;
+
+                const dy =
+                    y - position.y;
+
+                const distance =
+                    Math.sqrt(
+                        dx * dx +
+                        dy * dy
+                    );
+
+                return distance < minDistance;
+
+            });
+
+
+        if (!isTooClose) {
+
+            const position = {
+                x,
+                y
+            };
+
+            occupiedPositions.push(
+                position
+            );
+
+            return position;
+
+        }
+
+    }
+
+
+    // Fallback if the screen gets crowded.
+
+    return {
+        x:
+            minX +
+            Math.random() *
+            (maxX - minX),
+
+        y:
+            minY +
+            Math.random() *
+            (maxY - minY)
+    };
+
+}
+
+
+function discoverToy(toy) {
+
+    if (
+        toy.classList.contains(
+            "discovered"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    toy.classList.add(
+        "discovered"
+    );
+
+
+    discoveredCount++;
+
+
+    roomCounter.textContent =
+        `${discoveredCount} / 14`;
+
+
+    roomHint.style.opacity = "0";
+
+
+    setTimeout(() => {
+
+        adjustBubblePosition(toy);
+
+        toy.classList.add(
+            "show-message"
+        );
+
+    }, 150);
+
+
+    setTimeout(() => {
+
+        if (
+            nextToyIndex <
+            toys.length
+        ) {
+
+            revealNextToy();
+
+        }
+
+    }, 900);
+
+
+    if (
+    discoveredCount === 14
+) {
+
+    // Let all toys celebrate first.
+
+    setTimeout(() => {
+
+        toyField.classList.add(
+            "celebrating"
+        );
+
+    }, 250);
+
+
+    // Then reveal the final message.
+
+    setTimeout(() => {
+
+        roomComplete.classList.add(
+            "visible"
+        );
+
+    }, 2200);
+
+}
+
+}
+
+function adjustBubblePosition(toy) {
+
+    const toyRect =
+        toy.getBoundingClientRect();
+
+    const bubble =
+        toy.querySelector(".toy-message");
+
+
+    if (!bubble) {
+        return;
+    }
+
+
+    /*
+     * If the toy is too close to the top,
+     * put the bubble underneath it.
+     */
+
+    if (toyRect.top < 125) {
+
+        toy.classList.add("message-below");
+
+    } else {
+
+        toy.classList.remove("message-below");
+
+    }
+
+
+    /*
+     * Give the browser a moment to calculate
+     * the bubble's real dimensions.
+     */
+
+    requestAnimationFrame(() => {
+
+        const bubbleRect =
+            bubble.getBoundingClientRect();
+
+
+        let shift = 0;
+
+
+        /*
+         * Too far to the left
+         */
+
+        if (bubbleRect.left < 14) {
+
+            shift =
+                14 - bubbleRect.left;
+
+        }
+
+
+        /*
+         * Too far to the right
+         */
+
+        if (bubbleRect.right > window.innerWidth - 14) {
+
+            shift =
+                (window.innerWidth - 14) -
+                bubbleRect.right;
+
+        }
+
+
+        toy.style.setProperty(
+            "--bubble-shift",
+            `${shift}px`
+        );
+
+    });
+
+}
+
+
+/* =================================
+   PAGE 04 — THE SONG
+================================= */
+
+const songPage = document.getElementById("songPage");
+
+const songAudio = document.getElementById("songAudio");
+
+const lyricsList = document.getElementById("lyricsList");
+
+const lyricsWindow = document.getElementById("lyricsWindow");
+
+const chatMessages =
+    document.getElementById("chatMessages");
+
+const playButton =
+    document.getElementById("playButton");
+
+const songProgress =
+    document.getElementById("songProgress");
+
+const currentTimeElement =
+    document.getElementById("currentTime");
+
+const durationElement =
+    document.getElementById("duration");
+
+
+/* =================================
+   LRC DATA
+================================= */
+
+const lyrics = [
+
+    {
+        time: 1.01,
+        text: "قبل اى كلمة تقولها عن ظنونك و اللى كان"
+    },
+
+    {
+        time: 7.23,
+        text: "قبل ما تفرقنا كلمة قبل ما يفوت الاوان"
+    },
+
+    {
+        time: 13.50,
+        text: "قبل اى كلمة تقولها عن ظنونك و اللى كان"
+    },
+
+    {
+        time: 20.62,
+        text: "قبل ما تفرقنا كلمة قبل ما يفوت الاوان"
+    },
+
+    {
+        time: 26.55,
+        text: "يلا نسرق من الزمن لحظه تفاهم"
+    },
+
+    {
+        time: 32.17,
+        text: "محتمل نرجع واحسن من زمان"
+    },
+
+    {
+        time: 38.25,
+        text: "يلا نسرق من الزمن لحظه تفاهم"
+    },
+
+    {
+        time: 43.74,
+        text: "محتمل نرجع واحسن من زمان"
+    },
+
+    {
+        time: 50.14,
+        text: "احنا كنا الحب ذاته قبل متسافر بعيد"
+    },
+
+    {
+        time: 56.21,
+        text: "قولتلك خدنى معاك قولت راجع من جديد"
+    },
+
+    {
+        time: 62.92,
+        text: "احنا كنا الحب ذاته قبل متسافر بعيد"
+    },
+
+    {
+        time: 69.06,
+        text: "قولتلك خدنى معاك قولت راجع من جديد"
+    },
+
+    {
+        time: 75.73,
+        text: "واتوعدنا واتعهدنا بالعيون قبل الكلام"
+    },
+
+    {
+        time: 82.18,
+        text: "واتوعدنا واتعهدنا بالعيون قبل الكلام"
+    },
+
+    {
+        time: 89.06,
+        text: "واتفقنا عالرسايل وابتسمت وقمت قايل"
+    },
+
+    {
+        time: 95.59,
+        text: "واتفقنا عالرسايل وابتسمت وقمت قايل"
+    },
+
+    {
+        time: 102.23,
+        text: "مستحيل فى يوم تنام"
+    },
+
+    {
+        time: 109.20,
+        text: "قبل ماتكتبلى غنوة احس فيها فيها بالامان"
+    },
+
+    {
+        time: 119.54,
+        text: "وانتظرت يجينى ردك وانت عارف معني بعدك"
+    },
+
+    {
+        time: 126.23,
+        text: "وحدتى رجعتلى بعدك كنت جنبك يوم فى ضلك"
+    },
+
+    {
+        time: 132.18,
+        text: "حيرتي زادت من ظنونى قولت اسئل ناس صحابك"
+    },
+
+    {
+        time: 138.92,
+        text: "اللى ردوا وخوفوني قالوا انسي اللي راح وسابك"
+    },
+
+    {
+        time: 144.86,
+        text: "الا واحد بس قالى بكره راجع رغم انه"
+    },
+
+    {
+        time: 150.87,
+        text: "هوا دا اللى تملي انت ياما خفت منه"
+    },
+
+    {
+        time: 157.13,
+        text: "الا واحد بس قالى بكره راجع رغم انه"
+    },
+
+    {
+        time: 163.00,
+        text: "هوا دا اللى تملي انت ياما خفت منه"
+    },
+
+    {
+        time: 169.83,
+        text: "بس صاحبك اللى قالى اللى قالى هوا قلبى"
+    },
+
+    {
+        time: 176.16,
+        text: "قلبى اللى ياما قلت عليه زمان"
+    },
+
+    {
+        time: 181.36,
+        text: "قلبى اللى ياما قلت عليه زمان"
+    },
+
+    {
+        time: 186.80,
+        text: "قلبى اللى ياما قلت عليه زمان"
+    }
+
+];
+
+
+/* =================================
+   YOUR MESSAGES
+================================= */
+
+const songMessages = [
+
+    {
+        time: 3.20,
+        text: "هالو هالو"
+    },
+
+    {
+        time: 7.00,
+        text: "قبل اي كلمة تقولها حبيت اسمع معاكي الاغنية دي يمكن اخر مره نسمع اغاني سوا"
+    },
+
+    {
+        time: 15.80,
+        text: " 😂رايق ابو تيام مش كدا؟"
+    },
+
+    {
+        time: 30.30,
+        text: "اكيد هانبقى نسرق من الزمن كام لحظة كدا نتطمن فيها على بعض من بعيد لبعيد"
+    },
+
+    {
+        time: 61.00,
+        text: "بجد صداقتنا كانت غريبه 6 شهور بس ولا اكنها سنين سأفتقد الصداقه دي للأبد ياسكاكر"
+    },
+
+    {
+        time: 82.00,
+        text: " 😂 عايزين نوعد بعض بقا المرة دي اننا نفضل طايقين بعض مش زي المره اللي فاتت"
+    },
+
+    {
+        time: 110.00,
+        text: " 🥹 كدا مش هاسمع طربك تاني ياسكاكر؟ دا انا مكنتش بعرف انام غير على صوتك يافنانة"
+    },
+
+    {
+        time: 122.00,
+        text: "عايز اقولك اني هافضل دايما مستني منك كلمة او سلام هافضل منتظر سؤالك وهافضل ممتن لكل لحظة في ال6 شهور دول كان نفسي نفضل دايما صحاب بس يمكن مش هانفضل صحاب لكن معزتك عندي عمرها ما هاتقل ابدا هافضل فعلا منتظرك حتى لو مش هاتيجي❤️"
+    },
+
+    {
+        time: 128.40,
+        text: " 😓 ايوة ياعمو مصطفى وحدتي رجعتلي بعده"
+    },
+
+    {
+        time: 143.00,
+        text: " قرطاث النكد!!! اياكي تكوني بتعيطي انتي عارفه هاكسر راسك!!! + متعمده تستفزيني بعياطك يعني عشان عارفه اني مش هاعرف اعمل حاجه؟ 😬"
+    },
+
+    {
+        time: 168.80,
+        text: " مش كل كلمة وداع معناها النهايه اكيد مُقدر لينا نتجمع تاني في المستقبل بتمنى انك ماتكونيش مجرد شابتر وتبقي مكملة في الرواية كلها حتى بعد ما كل واحد يبقى عنده حياته الخاصة ❤️‍🩹"
+    },
+
+    {
+        time: 180.00,
+        text: " 👋 سلأغاااااااااااااااني"
+    }
+
+];
+
+
+/* =================================
+   STATE
+================================= */
+
+let currentLyricIndex = -1;
+
+let displayedMessageCount = 0;
+
+let songStarted = false;
+
+let songEnded = false;
+
+
+/* =================================
+   FORMAT TIME
+================================= */
+
+function formatSongTime(seconds) {
+
+    if (!Number.isFinite(seconds)) {
+
+        return "0:00";
+
+    }
+
+
+    const minutes =
+        Math.floor(seconds / 60);
+
+
+    const remaining =
+        Math.floor(seconds % 60);
+
+
+    return `${minutes}:${String(
+        remaining
+    ).padStart(2, "0")}`;
+
+}
+
+
+/* =================================
+   BUILD LYRICS
+================================= */
+
+function buildLyrics() {
+
+    lyricsList.innerHTML = "";
+
+    lyricsList.style.transform =
+        "translateY(0)";
+
+    currentLyricIndex = -1;
+
+
+    lyrics.forEach(
+        (line, index) => {
+
+            const element =
+                document.createElement("p");
+
+            element.className =
+                "lyric-line";
+
+            element.dataset.index =
+                index;
+
+            element.textContent =
+                line.text;
+
+            lyricsList.appendChild(
+                element
+            );
+
+        }
+    );
+
+}
+
+/* =================================
+   UPDATE LYRICS
+================================= */
+
+function updateLyrics(currentTime) {
+
+    let activeIndex = -1;
+
+
+    // Find current lyric
+
+    for (
+        let i = lyrics.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        if (
+            currentTime >= lyrics[i].time
+        ) {
+
+            activeIndex = i;
+
+            break;
+        }
+
+    }
+
+
+    const lyricElements =
+        lyricsList.querySelectorAll(
+            ".lyric-line"
+        );
+
+
+    // Before the first lyric
+
+    if (activeIndex === -1) {
+
+        lyricElements.forEach(
+            (element) => {
+
+                element.classList.remove(
+                    "previous",
+                    "current",
+                    "next"
+                );
+
+            }
+        );
+
+        lyricsList.style.transform =
+            "translateY(0)";
+
+        currentLyricIndex = -1;
+
+        return;
+    }
+
+
+    // Update visual states
+
+    lyricElements.forEach(
+        (element, index) => {
+
+            element.classList.remove(
+                "previous",
+                "current",
+                "next"
+            );
+
+
+            if (
+                index < activeIndex
+            ) {
+
+                element.classList.add(
+                    "previous"
+                );
+
+            }
+
+            else if (
+                index === activeIndex
+            ) {
+
+                element.classList.add(
+                    "current"
+                );
+
+            }
+
+            else {
+
+                element.classList.add(
+                    "next"
+                );
+
+            }
+
+        }
+    );
+
+
+    const currentElement =
+        lyricElements[
+            activeIndex
+        ];
+
+
+    if (!currentElement) {
+        return;
+    }
+
+
+    /*
+     * Because the lyrics list now starts
+     * at top: 0, offsetTop is reliable.
+     */
+
+    const currentCenter =
+        currentElement.offsetTop +
+        (
+            currentElement.offsetHeight / 2
+        );
+
+
+    const windowCenter =
+        lyricsWindow.clientHeight / 2;
+
+
+    const translateY =
+        windowCenter -
+        currentCenter;
+
+
+    lyricsList.style.transform =
+        `translateY(${translateY}px)`;
+
+
+    currentLyricIndex =
+        activeIndex;
+
+}
+
+
+/* =================================
+   SHOW MESSAGES
+================================= */
+
+function updateMessages(currentTime) {
+
+    while (
+        displayedMessageCount <
+        songMessages.length
+    ) {
+
+        const nextMessage =
+            songMessages[
+                displayedMessageCount
+            ];
+
+
+        if (
+            currentTime <
+            nextMessage.time
+        ) {
+
+            break;
+
+        }
+
+
+        addChatMessage(
+            nextMessage.text
+        );
+
+
+        displayedMessageCount++;
+
+    }
+
+}
+
+
+/* =================================
+   ADD CHAT MESSAGE
+================================= */
+
+function addChatMessage(text) {
+
+    const bubble =
+        document.createElement("div");
+
+    bubble.className =
+        "chat-message";
+
+    bubble.innerHTML = `
+        <span>${escapeHTML(text)}</span>
+    `;
+
+
+    chatMessages.appendChild(
+        bubble
+    );
+
+
+    requestAnimationFrame(() => {
+
+        chatMessages.scrollTo({
+            top:
+                chatMessages.scrollHeight,
+
+            behavior:
+                "smooth"
+        });
+
+    });
+
+}
+
+
+/* =================================
+   ESCAPE HTML
+================================= */
+
+function escapeHTML(value) {
+
+    const element =
+        document.createElement("div");
+
+    element.textContent = value;
+
+    return element.innerHTML;
+
+}
+
+
+/* =================================
+   UPDATE PLAYER
+================================= */
+
+function updatePlayer() {
+
+    if (
+        !songAudio.duration
+    ) {
+
+        return;
+
+    }
+
+
+    const current =
+        songAudio.currentTime;
+
+    const duration =
+        songAudio.duration;
+
+
+    currentTimeElement.textContent =
+        formatSongTime(current);
+
+
+    durationElement.textContent =
+        formatSongTime(duration);
+
+
+    songProgress.style.width =
+        `${(
+            current / duration
+        ) * 100}%`;
+
+}
+
+
+/* =================================
+   RESET SONG PAGE
+================================= */
+
+function resetSongPage() {
+
+    songAudio.pause();
+
+    songAudio.currentTime = 0;
+
+    songStarted = false;
+
+    songEnded = false;
+
+    currentLyricIndex = -1;
+
+    displayedMessageCount = 0;
+
+
+    lyricsList.style.transform =
+        "translateY(0)";
+
+
+    chatMessages.innerHTML = "";
+
+
+    buildLyrics();
+
+
+    currentTimeElement.textContent =
+        "0:00";
+
+
+    songProgress.style.width =
+        "0%";
+
+
+    playButton.textContent =
+        "▶";
+
+}
+
+
+/* =================================
+   START SONG PAGE
+================================= */
+
+async function startSongPage() {
+
+    resetSongPage();
+
+
+    /*
+     * This function gets called as a result
+     * of the user's tap on "keep going",
+     * so iPhone Safari is allowed to start
+     * playback here.
+     */
+
+    try {
+
+        await songAudio.play();
+
+        songStarted = true;
+
+        playButton.textContent =
+            "❚❚";
+
+    } catch (error) {
+
+        /*
+         * If Safari blocks playback,
+         * the user can simply tap play.
+         */
+
+        playButton.textContent =
+            "▶";
+
+    }
+
+}
+
+
+/* =================================
+   PLAY / PAUSE
+================================= */
+
+playButton.addEventListener(
+    "click",
+    async () => {
+
+        if (
+            songAudio.paused
+        ) {
+
+            try {
+
+                await songAudio.play();
+
+                playButton.textContent =
+                    "❚❚";
+
+            } catch {}
+
+        } else {
+
+            songAudio.pause();
+
+            playButton.textContent =
+                "▶";
+
+        }
+
+    }
+);
+
+
+/* =================================
+   AUDIO TIME UPDATE
+================================= */
+
+songAudio.addEventListener(
+    "timeupdate",
+    () => {
+
+        const current =
+            songAudio.currentTime;
+
+
+        updateLyrics(
+            current
+        );
+
+
+        updateMessages(
+            current
+        );
+
+
+        updatePlayer();
+
+    }
+);
+
+
+/* =================================
+   AUDIO PLAY
+================================= */
+
+songAudio.addEventListener(
+    "play",
+    () => {
+
+        songStarted = true;
+
+        playButton.textContent =
+            "❚❚";
+
+    }
+);
+
+
+/* =================================
+   AUDIO PAUSE
+================================= */
+
+songAudio.addEventListener(
+    "pause",
+    () => {
+
+        if (
+            !songEnded
+        ) {
+
+            playButton.textContent =
+                "▶";
+
+        }
+
+    }
+);
+
+
+/* =================================
+   AUDIO ENDED
+================================= */
+
+songAudio.addEventListener(
+    "ended",
+    () => {
+
+        songEnded = true;
+
+        playButton.textContent =
+            "▶";
+
+
+        /*
+         * Make sure every remaining
+         * timed message appears.
+         */
+
+        updateMessages(
+            Number.MAX_SAFE_INTEGER
+        );
+
+    }
+);
+
+
+/* =================================
+   PAGE 03 → PAGE 04
+================================= */
+
+roomContinue.addEventListener(
+    "click",
+    () => {
+
+        roomPage.classList.remove(
+            "active"
+        );
+
+
+        setTimeout(() => {
+
+            songPage.classList.add(
+                "active"
+            );
+
+
+            startSongPage();
+
+        }, 500);
+
+    }
+);
+
+
+/* =================================
+   INITIALIZE
+================================= */
+
+buildLyrics();
+
