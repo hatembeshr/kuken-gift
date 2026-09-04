@@ -226,44 +226,63 @@ function openDoor() {
     knockCount = KNOCK_LIMIT;
 
 
-    /* =============================
-       HIDE TEXT
-    ============================= */
+    /* =====================================================
+       HIDE THE HINT
+    ===================================================== */
 
     if (doorHint) {
         doorHint.textContent = "";
     }
 
 
-    /* =============================
+    /* =====================================================
        OPEN THE DOOR
-    ============================= */
+    ===================================================== */
 
     openingPage.classList.add(
         "door-open"
     );
 
 
-    /* =============================
-       START ZOOM
-    ============================= */
+    /* =====================================================
+       BLOOM
+       The door is already opening.
+       The light becomes stronger near the
+       end of the door movement.
+    ===================================================== */
 
     window.setTimeout(
         () => {
 
             openingPage.classList.add(
-                "door-zoom"
+                "door-bloom"
             );
 
         },
-        700
+        1050
     );
 
 
-    /* =============================
+    /* =====================================================
+       FINAL WHITE FADE
+    ===================================================== */
+
+    window.setTimeout(
+        () => {
+
+            openingPage.classList.add(
+                "door-fade"
+            );
+
+        },
+        1350
+    );
+
+
+    /* =====================================================
        MOVE TO PAGE 02
-       WHILE ZOOM IS STILL RUNNING
-    ============================= */
+       while the white fade is still finishing
+    ===================================================== */
 
     window.setTimeout(
         () => {
@@ -276,8 +295,17 @@ function openDoor() {
                 "active"
             );
 
+
+            /* Reset Page 01 state */
+
+            openingPage.classList.remove(
+                "door-open",
+                "door-bloom",
+                "door-fade"
+            );
+
         },
-        1450
+        1950
     );
 }
 

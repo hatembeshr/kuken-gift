@@ -3353,52 +3353,135 @@ input[type="range"]::-moz-range-thumb {
         rotateY(-48deg);
 }
 
+/* =========================================================
+   LIGHT INSIDE THE OPEN DOOR
+========================================================= */
+
+#openingPage .door-light {
+    position: absolute;
+    inset: -4%;
+
+    z-index: 1;
+
+    background: #fff;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    box-shadow:
+        0 0 25px rgba(255, 255, 255, .45),
+        0 0 55px rgba(255, 255, 255, .25);
+
+    transition:
+        opacity .7s ease,
+        box-shadow 1s ease,
+        filter 1s ease;
+}
+
 
 #openingPage.door-open .door-light {
     opacity: 1;
+
+    box-shadow:
+        0 0 40px rgba(255, 255, 255, .75),
+        0 0 90px rgba(255, 255, 255, .45);
 }
 
 
 /* =========================================================
-   SMOOTH ZOOM INTO THE LIGHT
+   DOOR
 ========================================================= */
 
-#openingPage .door-scene {
-    transform-origin: 58% 50%;
-    transform: scale(1);
+#openingPage .door-panel {
+    position: absolute;
+    inset: 0;
+
+    z-index: 3;
+
+    background: #050505;
+
+    transform-origin: left center;
+
+    transform-style: preserve-3d;
+
+    backface-visibility: hidden;
 
     transition:
-        transform 1.55s cubic-bezier(.12, .85, .18, 1);
+        transform 1.55s cubic-bezier(.22, .8, .2, 1);
 }
 
 
-#openingPage.door-zoom .door-scene {
-    transform: scale(14);
+#openingPage.door-open .door-panel {
+    transform:
+        rotateY(-48deg);
 }
+
 
 /* =========================================================
-   HIDE TEXT DURING OPENING
+   BLOOM
+========================================================= */
+
+#openingPage.door-bloom .door-light {
+    opacity: 1;
+
+    filter: brightness(1.35);
+
+    box-shadow:
+        0 0 50px rgba(255, 255, 255, .95),
+        0 0 110px rgba(255, 255, 255, .75),
+        0 0 180px rgba(255, 255, 255, .45);
+}
+
+
+/* =========================================================
+   FINAL WHITE FADE
+========================================================= */
+
+#openingPage.door-fade::after {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 100;
+
+    background: #fff;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    animation:
+        doorFinalFade
+        .65s
+        cubic-bezier(.4, 0, 1, 1)
+        forwards;
+}
+
+
+@keyframes doorFinalFade {
+
+    0% {
+        opacity: 0;
+    }
+
+    45% {
+        opacity: .35;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* =========================================================
+   HIDE TEXT
 ========================================================= */
 
 #openingPage.door-open .door-eyebrow,
 #openingPage.door-open .door-hint,
 #openingPage.door-open .door-knock {
     opacity: 0;
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 600px) {
-
-    #openingPage .door {
-        width: 210px;
-        height: 330px;
-    }
-
-    #openingPage .door-handle {
-        right: 22px;
-    }
 }
