@@ -229,201 +229,271 @@
     }
 
 
-    /* =====================================================
-       COUNTDOWN
-    ===================================================== */
+/* =====================================================
+   COUNTDOWN / FINAL PAGE UNLOCK
+===================================================== */
 
-    function updateCountdown() {
+const unlockDate =
+    new Date(2026, 11, 30, 0, 0, 0);
+
+
+function isFinalUnlocked() {
+
+    return new Date().getTime() >=
+        unlockDate.getTime();
+}
+
+
+function updateCountdown() {
+
+    const now = new Date();
+
+    let difference =
+        unlockDate.getTime() -
+        now.getTime();
+
+
+    if (difference <= 0) {
+        difference = 0;
+    }
+
+
+    const totalMinutes =
+        Math.floor(difference / 60000);
+
+
+    const months =
+        Math.floor(
+            totalMinutes /
+            (60 * 24 * 30.4375)
+        );
+
+
+    const remainingAfterMonths =
+        totalMinutes -
+        Math.floor(
+            months * 30.4375 * 24 * 60
+        );
+
+
+    const days =
+        Math.floor(
+            remainingAfterMonths /
+            (24 * 60)
+        );
+
+
+    const remainingAfterDays =
+        remainingAfterMonths -
+        days * 24 * 60;
+
+
+    const hours =
+        Math.floor(
+            remainingAfterDays / 60
+        );
+
+
+    const minutes =
+        remainingAfterDays % 60;
+
+
+    if (monthsEl) {
+        monthsEl.textContent =
+            String(months);
+    }
+
+
+    if (daysEl) {
+        daysEl.textContent =
+            String(days);
+    }
+
+
+    if (hoursEl) {
+        hoursEl.textContent =
+            String(hours).padStart(2, "0");
+    }
+
+
+    if (minutesEl) {
+        minutesEl.textContent =
+            String(minutes).padStart(2, "0");
+    }
+}
+
+
+function startCountdown() {
+
+    updateCountdown();
+
+
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+    }
+
+
+    countdownInterval =
+        setInterval(
+            updateCountdown,
+            1000
+        );
+}
+
+
+/* =====================================================
+   CHRISTMAS TREE
+===================================================== */
+
+function openTreePopup() {
+
+    if (!treePopup) {
+        return;
+    }
+
+
+    if (isFinalUnlocked()) {
+
+    treePopup.classList.remove("open");
+
+
+    /* ==============================
+       STOP PAGE 06 MUSIC
+    ============================== */
+
+    if (
+        typeof window.stopFinalPage ===
+        "function"
+    ) {
+
+        window.stopFinalPage();
+
+    }
+
+
+    /* ==============================
+       LEAVE PAGE 06
+    ============================== */
+
+    page.classList.remove("active");
+
+
+    /* ==============================
+       OPEN PAGE 07
+    ============================== */
+
+    const lastPage =
+        document.getElementById(
+            "birthdayPage"
+        );
+
+
+    if (lastPage) {
+
+        lastPage.classList.add("active");
+
 
         /*
-         * December 30, 2026 at 00:00
-         * using the visitor's local time.
+         * Initialize Page 07.
+         * This activates the intro scene.
          */
 
-        const target =
-            new Date(2026, 11, 30, 0, 0, 0);
+        if (
+            typeof window.startBirthdayPage ===
+            "function"
+        ) {
 
-        const now = new Date();
+            window.startBirthdayPage();
 
-        let difference =
-            target.getTime() - now.getTime();
-
-
-        if (difference <= 0) {
-            difference = 0;
         }
 
-
-        const totalMinutes =
-            Math.floor(difference / 60000);
-
-
-        const months =
-            Math.floor(
-                totalMinutes /
-                (60 * 24 * 30.4375)
-            );
-
-
-        const remainingAfterMonths =
-            totalMinutes -
-            Math.floor(
-                months * 30.4375 * 24 * 60
-            );
-
-
-        const days =
-            Math.floor(
-                remainingAfterMonths / (24 * 60)
-            );
-
-
-        const remainingAfterDays =
-            remainingAfterMonths -
-            days * 24 * 60;
-
-
-        const hours =
-            Math.floor(
-                remainingAfterDays / 60
-            );
-
-
-        const minutes =
-            remainingAfterDays % 60;
-
-
-        if (monthsEl) {
-            monthsEl.textContent =
-                String(months);
-        }
-
-
-        if (daysEl) {
-            daysEl.textContent =
-                String(days);
-        }
-
-
-        if (hoursEl) {
-            hoursEl.textContent =
-                String(hours).padStart(2, "0");
-        }
-
-
-        if (minutesEl) {
-            minutesEl.textContent =
-                String(minutes).padStart(2, "0");
-        }
     }
 
 
-    function startCountdown() {
-
-        updateCountdown();
-
-
-        if (countdownInterval) {
-            clearInterval(countdownInterval);
-        }
+    return;
+}
 
 
-        countdownInterval =
-            setInterval(
-                updateCountdown,
-                1000
-            );
+    treePopup.classList.add("open");
+
+    startCountdown();
+}
+
+
+function closeTreePopup() {
+
+    if (!treePopup) {
+        return;
     }
 
-
-    /* =====================================================
-       CHRISTMAS TREE
-    ===================================================== */
-
-    function openTreePopup() {
-
-        if (!treePopup) {
-            return;
-        }
+    treePopup.classList.remove("open");
+}
 
 
-        treePopup.classList.add("open");
+if (treeButton) {
 
-        startCountdown();
-    }
-
-
-    function closeTreePopup() {
-
-        if (!treePopup) {
-            return;
-        }
-
-
-        treePopup.classList.remove("open");
-    }
-
-
-    if (treeButton) {
-
-        treeButton.addEventListener(
-            "click",
-            (event) => {
-
-                event.stopPropagation();
-
-
-                if (
-                    treePopup?.classList.contains("open")
-                ) {
-
-                    closeTreePopup();
-
-                } else {
-
-                    openTreePopup();
-                }
-            }
-        );
-    }
-
-
-    if (treeClose) {
-
-        treeClose.addEventListener(
-            "click",
-            (event) => {
-
-                event.stopPropagation();
-
-                closeTreePopup();
-            }
-        );
-    }
-
-
-    document.addEventListener(
+    treeButton.addEventListener(
         "click",
         (event) => {
 
-            if (
-                !treePopup ||
-                !treePopup.classList.contains("open")
-            ) {
-                return;
-            }
+            event.stopPropagation();
 
 
             if (
-                !treePopup.contains(event.target) &&
-                !treeButton?.contains(event.target)
+                treePopup?.classList.contains("open")
             ) {
 
                 closeTreePopup();
+
+            } else {
+
+                openTreePopup();
+
             }
+
         }
     );
+}
 
+
+if (treeClose) {
+
+    treeClose.addEventListener(
+        "click",
+        (event) => {
+
+            event.stopPropagation();
+
+            closeTreePopup();
+
+        }
+    );
+}
+
+
+document.addEventListener(
+    "click",
+    (event) => {
+
+        if (
+            !treePopup ||
+            !treePopup.classList.contains("open")
+        ) {
+            return;
+        }
+
+
+        if (
+            !treePopup.contains(event.target) &&
+            !treeButton?.contains(event.target)
+        ) {
+
+            closeTreePopup();
+
+        }
+
+    }
+);
 
     /* =====================================================
        TREE WIGGLE

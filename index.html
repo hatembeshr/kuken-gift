@@ -1159,6 +1159,15 @@
     </div>
 
 
+    <p class="voice-recording-note">
+    <span>before you listen...</span>
+    <br>
+    I recorded this while crying, and had to redo it a few times.
+    <br>
+    So if my voice sounds a little strange... now you know why. 🤍
+</p>
+
+
     <button
         class="voice-note-button"
         id="voiceNoteButton"
@@ -1189,6 +1198,27 @@
 
     </button>
 
+    <div class="voice-progress">
+
+    <input
+        type="range"
+        id="voiceProgress"
+        min="0"
+        max="100"
+        value="0"
+        step="0.1"
+        aria-label="Voice note progress"
+    >
+
+    <div class="voice-time">
+
+        <span id="voiceCurrentTime">0:00</span>
+
+        <span id="voiceDuration">0:00</span>
+
+    </div>
+
+</div>
 
     <p class="voice-note-hint">
         press to listen
@@ -1201,9 +1231,10 @@
 
 
     <audio
-        id="birthdayVoice"
-        preload="auto"
-    ></audio>
+    id="birthdayVoice"
+    preload="auto"
+    src="gift.m4a"
+></audio>
 
 
     <div class="birthday-final-message">
@@ -1241,6 +1272,9 @@
     <script src="birthday-gift.js"></script>
 
     <script src="dev-nav.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/counterapi/dist/counter.browser.min.js"></script>
+    <script src="counter.js"></script>
 
 
 </body>

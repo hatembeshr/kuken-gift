@@ -35,10 +35,19 @@
 
 
     const voiceButton =
-        document.getElementById("voiceNoteButton");
+    document.getElementById("voiceNoteButton");
 
-    const voiceAudio =
-        document.getElementById("birthdayVoice");
+const voiceAudio =
+    document.getElementById("birthdayVoice");
+
+const voiceProgress =
+    document.getElementById("voiceProgress");
+
+const voiceCurrentTime =
+    document.getElementById("voiceCurrentTime");
+
+const voiceDuration =
+    document.getElementById("voiceDuration");
 
     const voiceStatus =
         document.getElementById("voiceNoteStatus");
@@ -48,6 +57,27 @@
 
     let openingTimer = null;
     let messageTimer = null;
+
+/* =====================================================
+   VOICE TIME HELPERS
+===================================================== */
+
+function formatVoiceTime(seconds) {
+
+    if (!Number.isFinite(seconds) || seconds < 0) {
+        return "0:00";
+    }
+
+    const minutes =
+        Math.floor(seconds / 60);
+
+    const remainingSeconds =
+        Math.floor(seconds % 60);
+
+    return `${minutes}:${String(
+        remainingSeconds
+    ).padStart(2, "0")}`;
+}
 
 
     /* =====================================================
@@ -417,6 +447,110 @@
 
     }
 
+
+
+    /* =====================================================
+   VOICE PROGRESS
+===================================================== */
+
+voiceAudio?.addEventListener(
+    "loadedmetadata",
+    () => {
+
+        if (
+            !voiceProgress ||
+            !Number.isFinite(voiceAudio.duration)
+        ) {
+            return;
+        }
+
+        voiceProgress.max =
+            voiceAudio.duration;
+
+        voiceProgress.value = 0;
+
+        if (voiceCurrentTime) {
+            voiceCurrentTime.textContent =
+                "0:00";
+        }
+
+        if (voiceDuration) {
+            voiceDuration.textContent =
+                formatVoiceTime(
+                    voiceAudio.duration
+                );
+        }
+
+    }
+);
+
+
+voiceAudio?.addEventListener(
+    "timeupdate",
+    () => {
+
+        if (
+            !voiceProgress ||
+            !Number.isFinite(voiceAudio.duration)
+        ) {
+            return;
+        }
+
+        voiceProgress.max =
+            voiceAudio.duration;
+
+        voiceProgress.value =
+            voiceAudio.currentTime;
+
+        if (voiceCurrentTime) {
+            voiceCurrentTime.textContent =
+                formatVoiceTime(
+                    voiceAudio.currentTime
+                );
+        }
+
+        if (voiceDuration) {
+            voiceDuration.textContent =
+                formatVoiceTime(
+                    voiceAudio.duration
+                );
+        }
+
+    }
+);
+
+
+if (voiceProgress) {
+
+    voiceProgress.addEventListener(
+        "input",
+        () => {
+
+            if (
+                !voiceAudio ||
+                !Number.isFinite(
+                    voiceAudio.duration
+                )
+            ) {
+                return;
+            }
+
+            const value =
+                Number(voiceProgress.value);
+
+            voiceAudio.currentTime =
+                Math.max(
+                    0,
+                    Math.min(
+                        value,
+                        voiceAudio.duration
+                    )
+                );
+
+        }
+    );
+
+}
 
     /* =====================================================
        VOICE ENDED
