@@ -6,11 +6,8 @@
 (() => {
     "use strict";
 
-    const WORKSPACE =
-        "hatembeshrs-team-5387";
-
-    const COUNTER_NAME =
-        "visits_kuken";
+    const COUNTER_WORKER =
+        "https://shiny-rice-f763.hatembshr330.workers.dev";
 
     const COUNTED_KEY =
         "kukenGiftVisitCounted";
@@ -25,15 +22,6 @@
         return;
     }
 
-    /*
-     * One visit = one browser session.
-     *
-     * Refreshing or moving between pages
-     * will NOT count again.
-     *
-     * Closing the site and opening it again
-     * creates a new session.
-     */
     function hasAlreadyCounted() {
         return sessionStorage.getItem(
             COUNTED_KEY
@@ -56,33 +44,30 @@
             return;
         }
 
-        if (
-            typeof window.Counter !==
-            "function"
-        ) {
-            console.warn(
-                "[Counter] CounterAPI library is not loaded."
-            );
-            return;
-        }
-
         try {
 
-            const counter =
-                new window.Counter({
-                    workspace: WORKSPACE
-                });
+            const response =
+                await fetch(
+                    COUNTER_WORKER,
+                    {
+                        method: "GET"
+                    }
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    `Worker returned ${response.status}`
+                );
+            }
 
             const result =
-                await counter.up(
-                    COUNTER_NAME
-                );
+                await response.json();
 
             markAsCounted();
 
             console.log(
-                "[Counter] Visit counted:",
-                result?.value
+                "[Counter] Visit counted successfully:",
+                result
             );
 
         } catch (error) {
@@ -107,13 +92,6 @@
 
     }
 
-    /*
-     * Watch Page 03.
-     *
-     * We don't count Page 01 or Page 02.
-     * The counter starts only when #roomPage
-     * becomes active.
-     */
     const observer =
         new MutationObserver(() => {
             checkPage03();
@@ -127,10 +105,6 @@
         }
     );
 
-    /*
-     * Also handle the case where Page 03
-     * is already active when this script loads.
-     */
     checkPage03();
 
 })();
