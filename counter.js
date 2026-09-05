@@ -1,6 +1,10 @@
 /* =========================================================
    SITE VISIT COUNTER
-   Counts one visit when Page 03 is reached.
+
+   One visit = one complete opening of the website.
+
+   The visit is counted only when Page 03 is reached.
+   Every new page load gets a new visit.
 ========================================================= */
 
 (() => {
@@ -8,9 +12,6 @@
 
     const COUNTER_WORKER =
         "https://shiny-rice-f763.hatembshr330.workers.dev";
-
-    const COUNTED_KEY =
-        "kukenGiftVisitCounted";
 
     const page03 =
         document.getElementById("roomPage");
@@ -22,27 +23,25 @@
         return;
     }
 
-    function hasAlreadyCounted() {
-        return sessionStorage.getItem(
-            COUNTED_KEY
-        ) === "true";
-    }
-
-    function markAsCounted() {
-        sessionStorage.setItem(
-            COUNTED_KEY,
-            "true"
-        );
-    }
+    /*
+     * This variable exists only for this particular
+     * opening of the website.
+     *
+     * It prevents the MutationObserver from counting
+     * the same visit more than once.
+     *
+     * A refresh/new opening creates a new JavaScript
+     * execution and therefore a new visit.
+     */
+    let visitCounted = false;
 
     async function countVisit() {
 
-        if (hasAlreadyCounted()) {
-            console.log(
-                "[Counter] Visit already counted."
-            );
+        if (visitCounted) {
             return;
         }
+
+        visitCounted = true;
 
         try {
 
@@ -50,7 +49,8 @@
                 await fetch(
                     COUNTER_WORKER,
                     {
-                        method: "GET"
+                        method: "GET",
+                        cache: "no-store"
                     }
                 );
 
@@ -63,20 +63,23 @@
             const result =
                 await response.json();
 
-            markAsCounted();
-
             console.log(
-                "[Counter] Visit counted successfully:",
+                "[Counter] Visit counted:",
                 result
             );
 
         } catch (error) {
 
+            /*
+             * Allow another attempt if the request
+             * failed completely.
+             */
+            visitCounted = false;
+
             console.error(
                 "[Counter] Failed to count visit:",
                 error
             );
-
         }
     }
 
@@ -89,7 +92,6 @@
         ) {
             countVisit();
         }
-
     }
 
     const observer =
@@ -105,6 +107,10 @@
         }
     );
 
+    /*
+     * Handles the case where Page 03 is already
+     * active when this script starts.
+     */
     checkPage03();
 
 })();
