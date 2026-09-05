@@ -1921,24 +1921,28 @@ input[type="range"]::-moz-range-thumb {
     }
 
 
+    /* =================================
+       SONG — SLIGHTLY SMALLER
+    ================================= */
+
     .song-side {
         flex:
             0
             0
-            52%;
+            45%;
 
         padding:
             max(
-                35px,
+                30px,
                 env(safe-area-inset-top)
             )
             24px
-            20px;
+            18px;
     }
 
 
     .song-meta {
-        margin-bottom: 18px;
+        margin-bottom: 16px;
     }
 
 
@@ -1948,35 +1952,43 @@ input[type="range"]::-moz-range-thumb {
 
 
     .lyrics-window {
-        height: 190px;
+        height: 175px;
     }
 
 
     .lyrics-list {
-        padding: 88px 0;
+        padding: 78px 0;
     }
 
 
     .lyric-line {
-        margin-bottom: 16px;
+        margin-bottom: 15px;
 
         font-size: 15px;
+
+        line-height: 1.55;
     }
 
 
     .player {
-        margin-top: 16px;
+        margin-top: 14px;
     }
 
+
+    /* =================================
+       CHAT — BIGGER AREA
+    ================================= */
 
     .chat-side {
         flex:
             1
             1
-            48%;
+            55%;
+
+        min-height: 0;
 
         padding:
-            16px
+            14px
             20px
             max(
                 18px,
@@ -1996,16 +2008,31 @@ input[type="range"]::-moz-range-thumb {
 
 
     .chat-header {
-        padding-bottom: 11px;
+        padding-bottom: 12px;
     }
 
 
     .chat-message {
-        max-width: 92%;
+        max-width: 94%;
 
-        font-size: 12px;
+        padding:
+            11px
+            14px
+            10px
+            14px;
 
         margin-bottom: 10px;
+
+        font-size: 15px;
+
+        line-height: 1.7;
+    }
+
+
+    .chat-message time {
+        margin-top: 6px;
+
+        font-size: 8px;
     }
 
 }
